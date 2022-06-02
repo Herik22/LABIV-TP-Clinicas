@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-top-nav-bar',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TopNavBarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private ruteo:Router) { }
 
   ngOnInit(): void {
+  }
+  goToListadoUsuarios(){
+    this.ruteo.navigate(['/usuarios/listado'])
   }
 
 }

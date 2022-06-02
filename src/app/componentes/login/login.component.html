@@ -1,23 +1,37 @@
-<main class="form-signin">
-    <form>
-      <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
-      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-  
-      <div class="form-floating">
-        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-        <label for="floatingInput">Email address</label>
+<main class="form-signin" style="width:100% ;">
+    
+      <div class="d-flex flex-column justify-content-center align-items-center ">
+        <form [formGroup]="formaLogin" (ngSubmit)="verificarLogin()" >
+        <img class="mb-4" src="../../../assets/login.png" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    
+        <div class="form-floating" >
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" formControlName="email">
+          <label for="floatingInput">Email address</label>
+          <small class="invalid" *ngIf="formaLogin.controls['email'].errors?.['required']&& formaLogin.controls['email'].touched" style="color:red ;">
+            El email es requerido
+           </small>
+           <small class="invalid" *ngIf="formaLogin.controls['email'].errors?.['email']&& formaLogin.controls['email'].touched" style="color:red ;">
+            Ingrese un formato valido
+           </small>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" formControlName="password">
+          <label for="floatingPassword">Password</label>
+          <small class="invalid" *ngIf="formaLogin.controls['password'].errors?.['required']&& formaLogin.controls['password'].touched" style="color:red ;">
+            La contraseña es requerida
+        </small>
+        </div>
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" [disabled]="formaLogin.invalid">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+      </form>
       </div>
-      <div class="form-floating">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-        <label for="floatingPassword">Password</label>
-      </div>
-  
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
-    </form>
+    
+    
+
 </main>

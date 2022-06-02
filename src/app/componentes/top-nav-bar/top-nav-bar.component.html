@@ -8,20 +8,15 @@
       <div class="collapse navbar-collapse" id="navbarsExample03">
         <ul class="navbar-nav me-auto mb-2 mb-sm-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#" style="color: black;">Home</a>
+            <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['bienvenida']" >Home</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" style="color: black;">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link " style="color: black;">Disabled</a>
-          </li>
+
+
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">Dropdown</a>
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">Usuarios</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
-              <li><a class="dropdown-item" href="#" style="color: grey;">Action</a></li>
-              <li><a class="dropdown-item" href="#" style="color: grey;">Another action</a></li>
-              <li><a class="dropdown-item" href="#" style="color: grey;">Something else here</a></li>
+              <li><a class="dropdown-item"  style="color: grey;"  (click)="goToListadoUsuarios()" >Listado</a></li>
+              <li><a class="dropdown-item" href="#" style="color: grey;">Alta Usuarios</a></li>
             </ul>
           </li>
         </ul>

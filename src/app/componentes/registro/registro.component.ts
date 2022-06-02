@@ -27,6 +27,8 @@ export class RegistroComponent implements OnInit {
   formaEspecialista:FormGroup;
   formaPaciente:FormGroup;
 
+  loading:boolean=false
+
   constructor(private fb:FormBuilder,private firebaseApi:FirebaseService,private ruteo:Router ) { 
     this.firebaseApi.getCollection('especialidades').subscribe(data=>{
       this.listaEspecialidades=data // mapeo de productos
@@ -68,6 +70,7 @@ export class RegistroComponent implements OnInit {
 
   registrarPaciente(){
 
+    this.loading=true
     //console.log(this.formaEspecialista.value)
     this.newPaciente.nombre=this.formaPaciente.value.nombrePaciente
     this.newPaciente.apellido=this.formaPaciente.value.apellidoP
@@ -91,8 +94,10 @@ export class RegistroComponent implements OnInit {
           // crear al nuevo especialista en fb.
           if(i==1){
           let rtaGuardarEspecilista = this.firebaseApi.addDataCollection('PacientesColl',JSON.parse(JSON.stringify(this.newPaciente)))
+          //this.loading=false   
           rtaGuardarEspecilista.status && this.formaEspecialista.reset()
-          rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])          
+          rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])     
+            
           }       
         }  
        })
@@ -107,6 +112,7 @@ export class RegistroComponent implements OnInit {
 
   registrarEspecialista(){
 
+    this.loading=true
     //console.log(this.formaEspecialista.value)
     this.newEspecialista.nombre=this.formaEspecialista.value.nombre
     this.newEspecialista.apellido=this.formaEspecialista.value.apellido
@@ -126,8 +132,10 @@ export class RegistroComponent implements OnInit {
         console.log(this.newEspecialista)
         // crear al nuevo especialista en fb.
         let rtaGuardarEspecilista = this.firebaseApi.addDataCollection('especialistasColl',JSON.parse(JSON.stringify(this.newEspecialista)))
+        //this.loading=false
         rtaGuardarEspecilista.status && this.formaEspecialista.reset()
         rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])    
+        
       }  
      })
      .catch(err =>{

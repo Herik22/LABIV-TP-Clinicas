@@ -4,9 +4,12 @@ import { BienvenidaComponent } from './componentes/bienvenida/bienvenida.compone
 import { LoginComponent } from './componentes/login/login.component';
 import { RegistroComponent } from './componentes/registro/registro.component';
 const routes: Routes = [
+  {path:'bienvenida',component:BienvenidaComponent},
   {path:'login',component:LoginComponent},
   {path:'registro',component:RegistroComponent},
-  {path:'',component:BienvenidaComponent}
+  {path:'usuarios',loadChildren:()=> import('./componentes/usuarios/usuarios.module').then(m => m.UsuariosModule)},
+  {path:'',component:BienvenidaComponent},
+  
 ];
 
 @NgModule({

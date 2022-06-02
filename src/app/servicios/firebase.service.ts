@@ -10,11 +10,63 @@ import firebase from 'firebase/compat/app';
 export class FirebaseService {
   private containerRef: AngularFirestoreCollection;
   storageRef = firebase.app().storage().ref()
+  isAdmin :boolean = false
+  isPaciente:boolean = false
+  isEspecialista:boolean = false
+
   constructor(private afauth:AngularFireAuth,private fireStore:AngularFirestore,private storage: AngularFirestore) {
     this.containerRef= fireStore.collection('especialistasColl'); // referencia a una coleccion
    }
 
 
+  isAdministrador(usuario:any){
+
+    if(usuario){
+      usuario.isAdmin?this.isAdmin=true:null
+    }
+
+  }
+  isPacientefn(usuario:any){
+
+    if(usuario){
+      usuario.perfil=='Paciente'?this.isPaciente=true:null
+    }
+
+  }
+  isEspecialistafn(usuario:any){
+
+    if(usuario){
+      usuario.perfil=='Especialista'?this.isEspecialista=true:null
+    }
+
+  }
+  async login(email:string,password:string){
+    try {
+      return await this.afauth.signInWithEmailAndPassword(email,password)
+    }catch (error) {
+  
+      throw error
+    }
+  }
+  async register(email:string,password:string){
+    try {
+      return await this.afauth.createUserWithEmailAndPassword(email,password)
+    } catch (error) {
+      console.log('ERROR REGISTER-SERVICE'+error)
+      throw error
+    }
+  }
+  getUserLogged(){
+    return this.afauth.authState
+  }
+  getCurrentUser()
+  {
+    return this.afauth.authState;
+  }
+
+  logOut(){
+    this.afauth.signOut()
+  }
   async subirImages (nombreAlbum:string,nombre:string,imgB64:any){
     try {
       let rta = await this.storageRef.child(`${nombreAlbum}/${nombre}`).putString(imgB64,'data_url') // name carpeta/Nombre imagen 

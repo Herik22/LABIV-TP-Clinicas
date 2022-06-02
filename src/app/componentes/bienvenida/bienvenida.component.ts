@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
   selector: 'app-bienvenida',
@@ -9,11 +9,22 @@ import { Router } from '@angular/router';
 })
 export class BienvenidaComponent implements OnInit {
 
-  constructor(private ruteo:Router) { }
+  isAdmin:any
+  isEspecialista:any
+  isPaciente:any
+  perfil:any
+  constructor(private firebaseApi:FirebaseService,private ruteo:Router) {
+    this.isAdmin = this.firebaseApi.isAdmin
+    this.isEspecialista = this.firebaseApi.isEspecialista
+    this.isPaciente=this.firebaseApi.isPaciente
+   }
 
+  
   ngOnInit(): void {
    
   }
+
+
   goToLogin(){
     this.ruteo.navigate(['login'])
   }
