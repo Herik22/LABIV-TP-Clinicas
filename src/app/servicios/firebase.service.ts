@@ -8,38 +8,30 @@ import firebase from 'firebase/compat/app';
   providedIn: 'root'
 })
 export class FirebaseService {
-  private containerRef: AngularFirestoreCollection;
+  private usuariosRef: AngularFirestoreCollection;
   storageRef = firebase.app().storage().ref()
-  isAdmin :boolean = false
+  isAdmin :boolean = true
   isPaciente:boolean = false
   isEspecialista:boolean = false
+  auxUser:any
 
   constructor(private afauth:AngularFireAuth,private fireStore:AngularFirestore,private storage: AngularFirestore) {
-    this.containerRef= fireStore.collection('especialistasColl'); // referencia a una coleccion
+    this.usuariosRef= fireStore.collection('UsuariosColeccion'); // referencia a una coleccion
    }
 
-
   isAdministrador(usuario:any){
-
-    if(usuario){
-      usuario.isAdmin?this.isAdmin=true:null
-    }
-
+    return usuario && usuario.isAdmin
   }
-  isPacientefn(usuario:any){
 
-    if(usuario){
-      usuario.perfil=='Paciente'?this.isPaciente=true:null
-    }
-
+  isAdministradorBeta(user:any){
+    return user && user.isAdmin
   }
-  isEspecialistafn(usuario:any){
 
-    if(usuario){
-      usuario.perfil=='Especialista'?this.isEspecialista=true:null
-    }
-
+  setUser(usuario:any){
+    this.auxUser=usuario
   }
+
+ 
   async login(email:string,password:string){
     try {
       return await this.afauth.signInWithEmailAndPassword(email,password)
@@ -97,6 +89,15 @@ export class FirebaseService {
   getCollection(nameColection:string){
     let collection = this.fireStore.collection<any>(nameColection)
     return collection.valueChanges()
+  }
+  autorizarUsuario(idEspecialista:string,): Promise<any> {
+    return this.usuariosRef.doc(idEspecialista).update({
+      valid:true ,
+      idCollectionfb:idEspecialista
+    });
+  }
+  getUsuariosColl(){
+    return this.usuariosRef.get();
   }
 }
 

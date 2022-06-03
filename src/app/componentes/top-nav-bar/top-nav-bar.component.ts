@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { FirebaseService } from 'src/app/servicios/firebase.service';
+import { setInterval } from 'timers';
+import { threadId } from 'worker_threads';
 @Component({
   selector: 'app-top-nav-bar',
   templateUrl: './top-nav-bar.component.html',
@@ -8,12 +10,21 @@ import { Router } from '@angular/router';
 })
 export class TopNavBarComponent implements OnInit {
 
-  constructor(private ruteo:Router) { }
+  @Input() isLogged:boolean=false
+  @Input() isAdmin:boolean=false
+
+  constructor(private ruteo:Router,private apiFB:FirebaseService) {
+
+
+   }
 
   ngOnInit(): void {
   }
   goToListadoUsuarios(){
     this.ruteo.navigate(['/usuarios/listado'])
   }
-
+  closeSesion(){
+    this.apiFB.logOut()
+    this.ruteo.navigate(['bienvenida'])
+  }
 }

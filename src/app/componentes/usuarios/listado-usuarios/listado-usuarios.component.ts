@@ -8,18 +8,34 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 })
 export class ListadoUsuariosComponent implements OnInit {
 
-  listaPacientes:any[]=[]
-  listaEspecialistas:any[]=[]
-  constructor(private firebaseApi:FirebaseService,) {
-    this.firebaseApi.getCollection('PacientesColl').subscribe(data=>{
-      this.listaPacientes=data // mapeo de productos
-    }) 
-    this.firebaseApi.getCollection('especialistasColl').subscribe(data=>{
-      this.listaEspecialistas=data // mapeo de productos
-    }) 
-    
-   }
+  listaUsuarios:any[]=[]
 
+  
+  nameColectionUsuarios:string ='UsuariosColeccion'
+  constructor(private firebaseApi:FirebaseService,) {
+    this.firebaseApi.getUsuariosColl().subscribe(data=>{
+      data.forEach(value=>{
+        this.listaUsuarios.push({...value.data(),idCollection:value.id})
+      })
+    })    
+   }
+   
+  updateValidate(idEspecialista:string){
+    this.firebaseApi.autorizarUsuario(idEspecialista)
+    .then(rta=>{  
+      this.actualizarListado()   
+    })
+  }
+  actualizarListado(){
+    this.listaUsuarios=[]
+    this.firebaseApi.getUsuariosColl().subscribe(data=>{
+      data.forEach(value=>{
+        
+        console.log({...value.data(),idCollection:value.id})
+        this.listaUsuarios.push({...value.data(),idCollection:value.id})
+      })
+    })    
+  }
   ngOnInit(): void {
   }
 

@@ -1,60 +1,33 @@
 <h2> Usuarios Pacientes </h2>
-<table  class="table">
+<table  class="table"  >
     <thead>
       <tr>
         <th scope="col">Nombre:</th>
         <th scope="col">Apellido:</th>
         <th scope="col">Edad:</th>
         <th scope="col">Dni:</th>
-        <th scope="col">ObraSocial:</th>
+        <th  scope="col">ObraSocial:</th>
+        <th  scope="col">Especialidad:</th>
         <th scope="col">Email:</th>
         <th scope="col">Perfil:</th>
-        <th scope="col">Foto1:</th>
-        <th scope="col">Foto2:</th>
+        <th scope="col">Validacion @ :</th>
+
+
        
       </tr>
     </thead>
-    <tbody *ngFor="let paciente of listaPacientes" >
+    <tbody *ngFor="let usuario of listaUsuarios" >
       <tr>
-        <td>{{paciente?.nombre}}</td>
-        <td>{{paciente?.apellido}}</td>
-        <td>{{paciente?.edad}}</td>
-        <td>{{paciente?.dni}}</td>
-        <td>{{paciente?.obraSocial}}</td>
-        <td>{{paciente?.email}}</td>
-        <td>{{paciente?.perfil}}</td>
-        <td><img src="{{paciente?.fotosPerfil[0]}}" alt="" width="70px" height="70px"></td>
-        <td><img src="{{paciente?.fotosPerfil[1]}}" alt="" width="70px" height="70px"></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2> Usuarios Especialistas </h2>
-<table  class="table">
-    <thead>
-      <tr>
-        <th scope="col">Nombre:</th>
-        <th scope="col">Apellido:</th>
-        <th scope="col">Edad:</th>
-        <th scope="col">Dni:</th>
-        <th scope="col">Especialidad:</th>
-        <th scope="col">Email:</th>
-        <th scope="col">Perfil:</th>
-        <th scope="col">Foto:</th>
-       
-      </tr>
-    </thead>
-    <tbody *ngFor="let especialista of listaEspecialistas" >
-      <tr>
-        <td>{{especialista?.nombre}}</td>
-        <td>{{especialista?.apellido}}</td>
-        <td>{{especialista?.edad}}</td>
-        <td>{{especialista?.dni}}</td>
-        <td>{{especialista?.especialidad}}</td>
-        <td>{{especialista?.email}}</td>
-        <td>{{especialista?.perfil}}</td>
-        <td><img src="{{especialista?.fotoPerfil}}" alt="" width="70px" height="70px"></td>
-
+        <td>{{usuario?.nombre}}</td>
+        <td>{{usuario?.apellido}}</td>
+        <td>{{usuario?.edad}}</td>
+        <td>{{usuario?.dni}}</td>
+        <td>{{usuario.obraSocial != undefined ?usuario.obraSocial:''}}</td>
+        <td>{{usuario.especialidad != undefined?usuario.especialidad:''}}</td>
+        <td>{{usuario?.email}}</td>
+        <td>{{usuario?.perfil}}</td>
+        <td *ngIf="usuario.perfil == 'Especialista' && !usuario.valid" > <button type="button" class="btn btn-success" (click)="updateValidate(usuario.idCollection)" > Validar </button> </td>
+        <td *ngIf="usuario.perfil == 'Especialista' && usuario.valid" style="color: green;" > Validado ✅ </td>
       </tr>
     </tbody>
   </table>

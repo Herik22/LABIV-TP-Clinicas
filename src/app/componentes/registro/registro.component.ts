@@ -14,20 +14,16 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 export class RegistroComponent implements OnInit {
 
   listaEspecialidades:any
-
   fotosPaciente:any
   fotoEspecialista:any
-
   newEspecialista:Especialista
   newPaciente:Paciente
-
   formPaciente:boolean;
   formEspecialista:boolean;
-
   formaEspecialista:FormGroup;
   formaPaciente:FormGroup;
-
   loading:boolean=false
+  nameCollectionUsers :string ='UsuariosColeccion'
 
   constructor(private fb:FormBuilder,private firebaseApi:FirebaseService,private ruteo:Router ) { 
     this.firebaseApi.getCollection('especialidades').subscribe(data=>{
@@ -44,7 +40,7 @@ export class RegistroComponent implements OnInit {
       'apellido':['',Validators.required],
       'edad':['',[Validators.required,Validators.min(10)]],
       'email':['',[Validators.required,Validators.email]],
-      'password':['',[Validators.required,]],
+      'password':['',[Validators.required,Validators.minLength(6)]],
       'foto':['',[Validators.required,]],
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
     })
@@ -55,7 +51,7 @@ export class RegistroComponent implements OnInit {
       'obraSocial':['',Validators.required],
       'edadP':['',[Validators.required,Validators.min(10)]],
       'emailP':['',[Validators.required,Validators.email]],
-      'passwordP':['',[Validators.required,]],
+      'passwordP':['',[Validators.required,Validators.minLength(6)]],
       'fotosP':['',[Validators.required,]],
 
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
@@ -93,10 +89,20 @@ export class RegistroComponent implements OnInit {
           this.newPaciente.fotosPerfil.push(rta)
           // crear al nuevo especialista en fb.
           if(i==1){
-          let rtaGuardarEspecilista = this.firebaseApi.addDataCollection('PacientesColl',JSON.parse(JSON.stringify(this.newPaciente)))
-          //this.loading=false   
-          rtaGuardarEspecilista.status && this.formaEspecialista.reset()
-          rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])     
+          this.firebaseApi.register(this.newPaciente.email,this.newPaciente.password)
+          .then(rta=>{
+            console.log('rta register fb')
+            console.log(rta)
+            this.newPaciente.uid = rta.user?.uid
+            let rtaGuardarEspecilista = this.firebaseApi.addDataCollection(this.nameCollectionUsers,JSON.parse(JSON.stringify(this.newPaciente)))
+            //this.loading=false   
+            rtaGuardarEspecilista.status && this.formaEspecialista.reset()
+            rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])     
+          })
+          .catch(err =>{
+            this.loading=false   
+            console.log('error al crear usuario fb'+err)
+          })
             
           }       
         }  
@@ -122,6 +128,9 @@ export class RegistroComponent implements OnInit {
     this.newEspecialista.email=this.formaEspecialista.value.email
     this.newEspecialista.password=this.formaEspecialista.value.password
 
+    console.log(this.newEspecialista)
+
+
     let reader =new FileReader()
     reader.readAsDataURL(this.fotoEspecialista)
     reader.onloadend=()=>{
@@ -130,11 +139,22 @@ export class RegistroComponent implements OnInit {
       if(rta != null ){
         this.newEspecialista.fotoPerfil = rta
         console.log(this.newEspecialista)
-        // crear al nuevo especialista en fb.
-        let rtaGuardarEspecilista = this.firebaseApi.addDataCollection('especialistasColl',JSON.parse(JSON.stringify(this.newEspecialista)))
+        // Registrar al nuevo especialista en fb.
+        this.firebaseApi.register(this.newEspecialista.email,this.newEspecialista.password)
+        .then(rta=>{
+          console.log('rta register fb ESPECIALISTA')
+          console.log(rta)
+          this.newEspecialista.uid = rta.user?.uid
+          let rtaGuardarEspecilista = this.firebaseApi.addDataCollection(this.nameCollectionUsers,JSON.parse(JSON.stringify(this.newEspecialista)))
         //this.loading=false
         rtaGuardarEspecilista.status && this.formaEspecialista.reset()
         rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])    
+        })
+        .catch(err=>{
+          this.loading=false
+          console.log('error al registar en fb ESPECIALISTA'+err)
+        })
+        
         
       }  
      })
@@ -142,8 +162,12 @@ export class RegistroComponent implements OnInit {
        return false
      })
     }
+
   }
 
+  setEspecialidad(id:any,nombre:any){
+    return {'id':1}
+  }
   cargarImagenLocalEspecialista(event:any){
     this.fotoEspecialista = event.target.files[0]  
     

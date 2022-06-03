@@ -12,7 +12,7 @@
           </li>
 
 
-          <li class="nav-item dropdown">
+          <li *ngIf="isLogged && isAdmin" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">Usuarios</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
               <li><a class="dropdown-item"  style="color: grey;"  (click)="goToListadoUsuarios()" >Listado</a></li>
@@ -20,9 +20,8 @@
             </ul>
           </li>
         </ul>
-        <form>
-          <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-        </form>
+        <button *ngIf="isLogged" type="button" class="btn btn-danger" (click)="closeSesion()"> Cerrar Sesión </button>
+   
       </div>
     </div>
   </nav>

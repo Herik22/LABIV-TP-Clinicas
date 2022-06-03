@@ -9,6 +9,7 @@ export class Paciente {
 ■ Password
 ■ 2 imágenes para su perfil.
     */
+    uid:string|undefined
     nombre:string
     apellido:string
     edad:number
@@ -19,7 +20,8 @@ export class Paciente {
     fotosPerfil:string[]
     perfil:string
     
-    constructor(nombre:string='',apellido:string='',edad:number=0,dni:number=0,obraSocial:string='',email:string='',password:string='',fotos:string[]=[],perfil:string='Paciente'){
+    constructor(nombre:string='',apellido:string='',edad:number=0,dni:number=0,obraSocial:string='',email:string='',password:string='',fotos:string[]=[],perfil:string='Paciente',uid:string=''){
+        this.uid=uid
         this.nombre=nombre
         this.apellido=apellido
         this.edad=edad
