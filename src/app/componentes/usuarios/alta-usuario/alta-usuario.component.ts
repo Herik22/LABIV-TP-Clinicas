@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AltaUsuarioComponent implements OnInit {
 
+  altaUsuario:boolean=true
   constructor() { }
 
   ngOnInit(): void {

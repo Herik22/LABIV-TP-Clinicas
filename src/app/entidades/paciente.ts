@@ -1,14 +1,4 @@
 export class Paciente {
-    /*
-        Nombre
-■ Apellido
-■ Edad
-■ DNI
-■ Obra Social
-■ Mail
-■ Password
-■ 2 imágenes para su perfil.
-    */
     uid:string|undefined
     nombre:string
     apellido:string

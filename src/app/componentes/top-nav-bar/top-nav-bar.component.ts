@@ -20,9 +20,11 @@ export class TopNavBarComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  goToListadoUsuarios(){
-    this.ruteo.navigate(['/usuarios/listado'])
+  goToUsuarios(link:string){
+
+    this.ruteo.navigate([`/usuarios/${link}`])
   }
+ 
   closeSesion(){
     this.apiFB.logOut()
     this.ruteo.navigate(['bienvenida'])

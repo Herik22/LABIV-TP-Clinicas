@@ -15,9 +15,6 @@ export class AppComponent {
       
     this.servicioLogin.getUserLogged().subscribe(res=>{ //observables
       if(res!=null){//EVENTO
-         
-        console.log(res)
-        console.log(this.servicioLogin.auxUser)
          this.isAdministrador=this.servicioLogin.isAdmin //this.servicioLogin.isAdministradorBeta(this.servicioLogin.auxUser)
          this.isLogged=true
       }else{

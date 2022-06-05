@@ -1,0 +1,104 @@
+<div class="container" >
+    <main >
+
+  
+      <div class="row g-5" style="flex-direction: row-reverse;">
+        <div class="col-md-5 col-lg-4 order-md-last">
+          <h4 class="d-flex justify-content-center align-items-center mb-3 text-center">
+            <span class="text-primary" style="font-size: 30px;">Fotos</span>
+          
+          </h4>
+          <div *ngIf="auxUsuario.perfil==='Paciente'" class="text-center" style="flex-direction: column;">
+            <img class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[0]"  >
+            <img  class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[1]"  >
+            
+          </div>
+          <div  *ngIf="auxUsuario.perfil!='Paciente'" class="text-center">
+            <img class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[0]"  >
+          </div>
+
+          <div class="col-md-5">
+            <label for="country" class="form-label">Tus Horarios</label>
+            <select class="form-select" id="country"  >
+              <option *ngFor="let especialidad of auxUsuario.especialidad" [value]="especialidad.id" (change)="selectedEspecialidad($event)" > {{especialidad.especialidaD}} </option>        
+            </select>
+            <hr class="my-4">
+            <label for="firstName" class="form-label">Duracion (min)</label>        
+            <input type="number" class="form-control" id="firstName" placeholder="0"  disabled="false" [defaultValue]="especialidadSelected.disponibilidad"  >
+            
+          </div>
+
+        </div>
+
+        <div class="col-md-7 col-lg-8">
+          <h4 class="mb-3 text-center"  > Tus Datos </h4>
+          <form class="needs-validation" novalidate>
+            <div class="row g-3">
+
+              <div class="col-12">
+                <label for="username" class="form-label">Nombre</label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text">✍🏼</span>
+                  <input type="text" class="form-control" id="username" placeholder="Username" [value]="auxUsuario.nombre" disabled="false" >
+               
+                </div>
+              </div>
+              <div class="col-12">
+                <label for="lastName" class="form-label">Apellido</label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text">✍🏼</span>
+                  <input type="text" class="form-control" id="lastName" placeholder="Username" [value]="auxUsuario.apellido" disabled="false" >
+               
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="firstName" class="form-label">Edad</label>
+               
+                <input type="text" class="form-control" id="firstName" placeholder="" [value]="auxUsuario.edad" disabled="false"  >
+                
+              </div>
+  
+              <div class="col-sm-6">
+                
+                <label for="documento" class="form-label">Dni</label>
+               
+                <input type="text" class="form-control" id="documento" placeholder="" [value]="auxUsuario.dni" disabled="false" >
+                
+              </div>
+  
+              <div class="col-12">
+                <label for="email" class="form-label"> Email </label>
+                <input type="email" class="form-control" id="email" placeholder="you@example.com" [value]="auxUsuario.email" disabled="false">
+              
+              </div>
+  
+              <div class="col-12">
+                <label for="address" class="form-label"> Perfil </label>
+                <input type="text" class="form-control" id="address" placeholder="" [value]="auxUsuario.isAdmin?'Administrador':auxUsuario.perfil" disabled="false" >
+              </div>
+
+              <div *ngIf="auxUsuario.perfil === 'Especialista'" class="col-12">
+                <label for="obraS" class="form-label"> Especialidad </label>
+                <input type="text" class="form-control" id="obraS" placeholder="" [value]="auxUsuario.especialidad" disabled="false" >
+              </div>
+              <div *ngIf="auxUsuario.perfil === 'Paciente'" class="col-12">
+                <label for="obraS" class="form-label"> Obra Social </label>
+                <input type="text" class="form-control" id="obraS" placeholder="" [value]="auxUsuario.obraSocial" disabled="false" >
+              </div>
+  
+
+
+            </div>
+  
+           
+            <hr class="my-4">
+            <hr class="my-4">
+        
+            <button class="w-100 btn btn-primary btn-lg" type="submit"> Guardar</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+</div>

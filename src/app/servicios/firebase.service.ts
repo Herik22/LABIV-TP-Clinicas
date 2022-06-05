@@ -86,6 +86,23 @@ export class FirebaseService {
     }
     return response
   }
+  addDocumentoaColeccion(nameColection:string,nameDocument:string,data:any){
+    let response = {status:true,error:''}
+    let collection = this.fireStore.collection<any>(nameColection)
+    try {
+      collection.doc(nameDocument).set(data).then(data=>{
+        
+          response.status=false;
+          response.error='data vacia';
+      })
+    }catch (error) {
+        response.status=false;
+        response.error=`${error}`; 
+        console.log(error)
+    }
+    return response
+  }
+
   getCollection(nameColection:string){
     let collection = this.fireStore.collection<any>(nameColection)
     return collection.valueChanges()
@@ -93,11 +110,13 @@ export class FirebaseService {
   autorizarUsuario(idEspecialista:string,): Promise<any> {
     return this.usuariosRef.doc(idEspecialista).update({
       valid:true ,
-      idCollectionfb:idEspecialista
     });
   }
   getUsuariosColl(){
     return this.usuariosRef.get();
+  }
+  getUser(id:string|undefined){ 
+      return this.usuariosRef.doc(id).get()
   }
 }
 

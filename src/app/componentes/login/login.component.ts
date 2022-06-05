@@ -46,11 +46,11 @@ export class LoginComponent implements OnInit {
            }else{
              alert('Debe validarte un ADMINISTRADOR')
            }
+        }else{
+          this.logIn(value.email,value.password)
         }
 
         //this.logIn(value)
-       
-      
       }
     })
   }

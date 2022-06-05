@@ -9,6 +9,7 @@ import { LoginComponent } from './componentes/login/login.component';
 import { RegistroComponent } from './componentes/registro/registro.component';
 import { environment } from 'src/environments/environment.prod';
 import {AngularFireModule} from '@angular/fire/compat';
+import { ModuloCompartidoModule } from './componentes/modulo-compartido/modulo-compartido.module';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {AngularFireModule} from '@angular/fire/compat';
     BrowserModule,
     AppRoutingModule,FormsModule,ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    ModuloCompartidoModule
   ],
   providers: [],
   bootstrap: [AppComponent]
