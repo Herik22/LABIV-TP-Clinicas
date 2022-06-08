@@ -17,15 +17,34 @@
             <img class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[0]"  >
           </div>
 
-          <div class="col-md-5">
-            <label for="country" class="form-label">Tus Horarios</label>
-            <select class="form-select" id="country"  >
-              <option *ngFor="let especialidad of auxUsuario.especialidad" [value]="especialidad.id" (change)="selectedEspecialidad($event)" > {{especialidad.especialidaD}} </option>        
-            </select>
+          <div *ngIf="auxUsuario.perfil==='Especialista'"  class=" text-center">
+
+            <label for="country" class="form-label text-primary text-center " style="font-size: 25px;">Tus Especialidades</label>
+
+            <table  class="table"  >
+              <thead>
+                <tr>
+                  <th scope="col">Nombre</th>   
+                  <th scope="col">Accion</th>   
+                </tr>
+              </thead>
+              <tbody *ngFor="let especialidad of auxUsuario.especialidad" >
+                <tr>
+                  <td>{{especialidad?.especialidad}}</td>
+                  <td *ngIf="especialidadSelected.id !=  especialidad.id"> <button class=" btn btn-info " type="submit" (click)="selectedEspecialidad(especialidad.id)"> Seleccionar </button>  </td>
+                  <td *ngIf="especialidadSelected.id ===  especialidad.id"> <button class=" btn btn-success " type="submit" (click)="selectedEspecialidad(especialidad.id)"> Seleccionada ✅ </button>  </td>
+                  
+                </tr>
+              </tbody>
+            </table>
+            <span class="text-primary text-center" style="font-size: 25px;">Disponibilidad </span>
             <hr class="my-4">
-            <label for="firstName" class="form-label">Duracion (min)</label>        
-            <input type="number" class="form-control" id="firstName" placeholder="0"  disabled="false" [defaultValue]="especialidadSelected.disponibilidad"  >
-            
+            <label for="firstName" class="form-label">Duracion (min)</label>   
+            <span class="input-group-text">Actual: {{especialidadSelected.disponibilidad}} min </span>     
+            <input type="number" class="form-control" id="firstName" placeholder="Ingresa tu disponibilidad"   [(ngModel)]="newDisponibilidad"   >
+            <hr class="my-4">
+           
+            <button class=" btn btn-success  " type="submit" (click)="actualizarDuracionEspecialidad(especialidadSelected.id)"  > Guardar Disponibilidad </button>
           </div>
 
         </div>

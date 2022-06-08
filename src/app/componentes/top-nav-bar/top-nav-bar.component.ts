@@ -20,8 +20,12 @@ export class TopNavBarComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  
+  goToTurnos(link:string){
+    this.ruteo.navigate([`/turnos/${link}`])
+  }
+ 
   goToUsuarios(link:string){
-
     this.ruteo.navigate([`/usuarios/${link}`])
   }
  

@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 import { Router } from '@angular/router';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Usuario } from 'src/app/entidades/usuario';
+var uniqid = require('uniqid'); 
 
 import { Especialista } from 'src/app/entidades/especialista';
 @Component({
@@ -21,16 +22,18 @@ export class FormUComponent implements OnInit {
   auxUsuario:Usuario
   formaEspecialista:FormGroup;
   formaAdmin:FormGroup;
+  formaNewEspecialidad:FormGroup;
   loading:boolean=false
   nameCollectionUsers :string ='UsuariosColeccion'
 
-
+  agregarEspecialidad:boolean=false
 
   @Input() auxAdmin:Usuario 
   @Input() altaAdmin:boolean=false
 
 
   constructor(private fb:FormBuilder,private firebaseApi:FirebaseService,private ruteo:Router ) {
+    console.log(uniqid())
     this.firebaseApi.getCollection('especialidades').subscribe(data=>{
       this.listaEspecialidades=data // mapeo de productos
     })   
@@ -58,9 +61,19 @@ export class FormUComponent implements OnInit {
       'foto':['',[Validators.required,]],
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
     })
-   }
+    this.formaNewEspecialidad = this.fb.group({
+
+      'nombreEspecialidad':['',[Validators.required,]],
+      'duracion':[30,[Validators.required,Validators.min(1)]],
+
+    })
+   
+  }
 
   ngOnInit(): void {
+  }
+  imprimirForma(){
+    console.log(this.formaEspecialista)
   }
 
   registrarEspecialista(){
@@ -71,11 +84,25 @@ export class FormUComponent implements OnInit {
     this.auxUsuario.apellido=this.formaEspecialista.value.apellido
     this.auxUsuario.edad=this.formaEspecialista.value.edad
     this.auxUsuario.dni=this.formaEspecialista.value.nombre2
-    this.listaEspecialidades.forEach(value=>{
-      if(value.id === this.formaEspecialista.value.especialidad){
-        this.auxUsuario.especialidad.push({id:value.id,especialidaD:value.especialidad,disponibilidad:30})
-      }
-    })
+    if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
+      this.listaEspecialidades.forEach(value=>{
+        if(value.id === this.formaEspecialista.value.especialidad){
+          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30})
+        }
+      })
+    }else{ 
+      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad,disponibilidad:this.formaNewEspecialidad.value.duracion}
+      let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
+      if (rtaGuardarEspecialidad.status){
+        this.auxUsuario.especialidad.push(newEspecialidad)
+      }else{
+        alert('error al guardar la especialidad') 
+        return
+      }  //agrego una especialidad.
+      
+    }
+   
+
    // this.auxUsuario.especialidad=this.formaEspecialista.value.especialidad
     this.auxUsuario.email=this.formaEspecialista.value.email
     this.auxUsuario.password=this.formaEspecialista.value.password
@@ -83,8 +110,7 @@ export class FormUComponent implements OnInit {
     console.log(this.auxUsuario)
 
 
-   
-   let reader =new FileReader()
+let reader =new FileReader()
     reader.readAsDataURL(this.fotoEspecialista)
     reader.onloadend=()=>{
      this.firebaseApi.subirImages('fotosUsuarios',`${this.auxUsuario.dni}_${this.auxUsuario.nombre}`,reader.result)
@@ -116,6 +142,8 @@ export class FormUComponent implements OnInit {
        return false
      })
     }
+ 
+   
 
 
   }
@@ -166,7 +194,9 @@ export class FormUComponent implements OnInit {
     }
   }
 
-
+  habilitarNewEspecialidad(){
+    this.agregarEspecialidad= !this.agregarEspecialidad
+  }
 
   cargarImagenLocalEspecialista(event:any){
     this.fotoEspecialista = event.target.files[0]  

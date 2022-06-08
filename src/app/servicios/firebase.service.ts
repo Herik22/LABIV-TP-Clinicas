@@ -90,6 +90,7 @@ export class FirebaseService {
     let response = {status:true,error:''}
     let collection = this.fireStore.collection<any>(nameColection)
     try {
+      //guardes en la coleccion
       collection.doc(nameDocument).set(data).then(data=>{
         
           response.status=false;
@@ -111,6 +112,9 @@ export class FirebaseService {
     return this.usuariosRef.doc(idEspecialista).update({
       valid:true ,
     });
+  }
+ updateDuracion(idEspecialista:string|undefined,objActualizado:any): Promise<any> {
+    return this.usuariosRef.doc(idEspecialista).update(objActualizado);
   }
   getUsuariosColl(){
     return this.usuariosRef.get();

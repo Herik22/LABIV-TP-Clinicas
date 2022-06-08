@@ -8,6 +8,7 @@ const routes: Routes = [
   {path:'login',component:LoginComponent},
   {path:'registro',component:RegistroComponent},
   {path:'usuarios',loadChildren:()=> import('./componentes/usuarios/usuarios.module').then(m => m.UsuariosModule)},
+{path:'turnos',loadChildren:()=> import('./componentes/turnos/turnos.module').then(m=> m.TurnosModule)},
   {path:'',component:BienvenidaComponent},
   
 ];

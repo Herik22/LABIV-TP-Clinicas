@@ -4,7 +4,7 @@ export class Usuario  {
     apellido:string
     edad:number
     dni:number
-    obraSocial:any
+    obraSocial:string=''
     especialidad:any[]=[]
     email:string
     password:string
