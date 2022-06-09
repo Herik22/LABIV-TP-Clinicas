@@ -107,6 +107,7 @@ export class RegistroComponent implements OnInit {
 
   registrarEspecialista(){
 
+    
     //console.log(this.formaEspecialista.value)
     this.newEspecialista.nombre=this.formaEspecialista.value.nombre
     this.newEspecialista.apellido=this.formaEspecialista.value.apellido
@@ -135,6 +136,11 @@ export class RegistroComponent implements OnInit {
      })
     }
   }
+
+
+  correctCaptcha (response:any) {
+    alert(response);
+};
 
   cargarImagenLocalEspecialista(event:any){
     this.fotoEspecialista = event.target.files[0]  
