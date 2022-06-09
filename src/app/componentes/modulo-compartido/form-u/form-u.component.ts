@@ -83,6 +83,9 @@ export class FormUComponent implements OnInit {
     this.auxUsuario.apellido=this.formaEspecialista.value.apellido
     this.auxUsuario.edad=this.formaEspecialista.value.edad
     this.auxUsuario.dni=this.formaEspecialista.value.nombre2
+    this.auxUsuario.email=this.formaEspecialista.value.email
+    this.auxUsuario.password=this.formaEspecialista.value.password
+
     if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
       this.listaEspecialidades.forEach(value=>{
         if(value.id === this.formaEspecialista.value.especialidad){
@@ -103,9 +106,7 @@ export class FormUComponent implements OnInit {
    
 
    // this.auxUsuario.especialidad=this.formaEspecialista.value.especialidad
-    this.auxUsuario.email=this.formaEspecialista.value.email
-    this.auxUsuario.password=this.formaEspecialista.value.password
-
+   
     console.log(this.auxUsuario)
 
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Especialista } from 'src/app/entidades/especialista';
 import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
@@ -20,6 +21,7 @@ export class SolicitarTurnoComponent implements OnInit {
         res.forEach(value=>{
           if(value.perfil==='Especialista'){
             let newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotos,value.isAdmon)
+            newUser.especialidad = value.especialidad
             newArray.push(newUser)
           }
         })
@@ -35,8 +37,9 @@ export class SolicitarTurnoComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  selectEspecialidad(){
-    
+  selectEspecialista(item:Usuario){
+    console.log(item)
+    this.listaEspedialidades = item.especialidad
   }
   getProximosDias(){
     let fecha = new Date()
