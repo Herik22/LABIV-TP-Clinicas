@@ -64,7 +64,6 @@ export class FormUComponent implements OnInit {
     this.formaNewEspecialidad = this.fb.group({
 
       'nombreEspecialidad':['',[Validators.required,]],
-      'duracion':[30,[Validators.required,Validators.min(1)]],
 
     })
    
@@ -91,10 +90,10 @@ export class FormUComponent implements OnInit {
         }
       })
     }else{ 
-      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad,disponibilidad:this.formaNewEspecialidad.value.duracion}
+      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad}
       let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
       if (rtaGuardarEspecialidad.status){
-        this.auxUsuario.especialidad.push(newEspecialidad)
+        this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30})
       }else{
         alert('error al guardar la especialidad') 
         return

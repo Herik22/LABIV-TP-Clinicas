@@ -1,6 +1,5 @@
-<main class="form-signin" style="width:100% ;">
-    
-      <div class="d-flex flex-column justify-content-center align-items-center ">
+<!-- <main class="form-signin" style="width:100% ;">
+    <div class="d-flex flex-column justify-content-center align-items-center ">
         <form [formGroup]="formaLogin" (ngSubmit)="verificarLogin()" >
         <img class="mb-4" src="../../../assets/login.png" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
@@ -34,4 +33,41 @@
     
     
 
-</main>
+</main> --> 
+<div class="wrapper">
+  <div class="logo">
+      <img src="../../../assets/login.png" alt="">
+  </div>
+  <div class="text-center mt-4 name">
+      Hospitales
+  </div>
+  <form [formGroup]="formaLogin" (ngSubmit)="verificarLogin()" >
+      <div class="form-field d-flex align-items-center">
+          <span class="far fa-user"></span>
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" formControlName="email">
+          <small class="invalid" *ngIf="formaLogin.controls['email'].errors?.['required']&& formaLogin.controls['email'].touched" style="color:red ;">
+            El email es requerido
+           </small>
+           <small class="invalid" *ngIf="formaLogin.controls['email'].errors?.['email']&& formaLogin.controls['email'].touched" style="color:red ;">
+            Ingrese un formato valido
+           </small>
+      </div>
+      <div class="form-field d-flex align-items-center">
+          <span class="fas fa-key"></span>
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" formControlName="password">
+          <small class="invalid" *ngIf="formaLogin.controls['password'].errors?.['required']&& formaLogin.controls['password'].touched" style="color:red ;">
+            La contraseña es requerida
+        </small>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" [disabled]="formaLogin.invalid">Sign in</button>
+  </form>
+  
+</div>
+<div class="text-center fs-6" style="flex-direction:row;width: 50vh;position: absolute;right: 30px;bottom: 5px;">
+  <button class=" btn btn-sm btn-primary" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20; margin-bottom: 10px;" (click)="accesoRapido(1)" >paciente 1 🤧</button>
+  <button class=" btn btn-sm btn-secondary" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20;margin-bottom: 10px">paciente 2 😷</button>
+  <button class=" btn btn-sm btn-success" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20;margin-bottom: 10px">paciente 3 🤒</button>
+  <button class=" btn btn-sm btn-warning" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20;margin-bottom: 10px">Especialista 1 👩🏼‍🔬</button>
+  <button class=" btn btn-sm btn-info" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20;">Especialista 2 🧑🏽‍🔬</button>
+  <button class=" btn btn-sm btn-light" type="button" style="margin-right: 10px;margin-left: 10px;width: 150px;height: 40px;border-radius: 20;">Administrador  💼</button>
+</div>

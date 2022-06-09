@@ -66,4 +66,24 @@ export class LoginComponent implements OnInit {
     })
 
   }
+
+  accesoRapido(perfil:number){
+    switch(perfil){
+      case 1:
+        let email:HTMLElement | null = document.getElementById('floatingInput')
+        if(email != null){
+            email.nodeValue='hrh'
+        } 
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+    }
+
+  }
 }

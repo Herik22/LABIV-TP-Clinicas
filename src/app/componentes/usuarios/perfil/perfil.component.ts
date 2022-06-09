@@ -49,6 +49,8 @@ export class PerfilComponent implements OnInit {
   }
 
   actualizarDuracionEspecialidad(idEspecialidad:string){
+
+    // el especiaño
     let specialidades = this.auxUsuario.especialidad
     
     let newEspecialidades = specialidades.map(value=>{
