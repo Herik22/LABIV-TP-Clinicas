@@ -9,6 +9,7 @@ import firebase from 'firebase/compat/app';
 })
 export class FirebaseService {
   private usuariosRef: AngularFirestoreCollection;
+  private turnosRef: AngularFirestoreCollection;
   storageRef = firebase.app().storage().ref()
   isAdmin :boolean = true
   isPaciente:boolean = false
@@ -17,6 +18,7 @@ export class FirebaseService {
 
   constructor(private afauth:AngularFireAuth,private fireStore:AngularFirestore,private storage: AngularFirestore) {
     this.usuariosRef= fireStore.collection('UsuariosColeccion'); // referencia a una coleccion
+    this.turnosRef = fireStore.collection('TurnosColeccion');
    }
 
   isAdministrador(usuario:any){
@@ -55,7 +57,6 @@ export class FirebaseService {
   {
     return this.afauth.authState;
   }
-
   logOut(){
     this.afauth.signOut()
   }
@@ -122,5 +123,6 @@ export class FirebaseService {
   getUser(id:string|undefined){ 
       return this.usuariosRef.doc(id).get()
   }
+
 }
 

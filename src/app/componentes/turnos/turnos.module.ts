@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { TurnosRoutingModule } from './turnos-routing.module';
 import { SolicitarTurnoComponent } from './solicitar-turno/solicitar-turno.component';
+import { TurnosClinicaComponent } from './turnos-clinica/turnos-clinica.component';
 
 
 @NgModule({
   declarations: [
-    SolicitarTurnoComponent
+    SolicitarTurnoComponent,
+    TurnosClinicaComponent
   ],
   imports: [
     CommonModule,

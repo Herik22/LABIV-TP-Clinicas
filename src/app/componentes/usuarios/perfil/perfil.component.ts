@@ -33,6 +33,8 @@ export class PerfilComponent implements OnInit {
        this.auxUsuario.perfil = objFB?objFB['perfil']:''
        this.auxUsuario.isAdmin = objFB?objFB['isAdmin']:false
        this.auxUsuario.valid = objFB?objFB['valid']:0
+       this.auxUsuario.password = objFB?objFB['password']:''
+
 
       
       this.especialidadSelected = this.auxUsuario.especialidad[0]

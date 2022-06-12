@@ -83,6 +83,7 @@
   <div *ngIf="especialistaSelected && isEspecialidadSelected && !currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
     <h2>Especialidad y Especialistas Seleccionados</h2>
     <button class="btn" >   </button>
+    
     <div  class="col">
       <div class="card" style="width:400px">
         <button class="btn">
@@ -94,6 +95,7 @@
       </div>
    
     </div>
+
     <div  class="col">
     <div class="card" style="width:400px">
       <button class="btn" >
@@ -120,6 +122,9 @@
       <div *ngIf="!tieneDiasDisponibles">
         <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
       </div>
+
+      <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
+
      
 
   </div>
@@ -175,15 +180,18 @@
     </div>
     </div>
 
-      <div  *ngIf="tieneDiasDisponibles" >
+    <div  *ngIf="tieneDiasDisponibles" >
         <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_.toDateString()}} </button>
 
         <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora.getMinutes()}} </button>
   
-      </div>
-      <div *ngIf="!tieneDiasDisponibles">
+    </div>
+    <div *ngIf="!tieneDiasDisponibles">
         <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
-      </div>
+    </div>
+    
+    <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
+
      
 
   </div>

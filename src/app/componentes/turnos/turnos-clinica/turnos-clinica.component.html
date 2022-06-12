@@ -1,0 +1,54 @@
+<p>turnos-clinica works!</p>
+<h3>FILTROS</h3>
+<button   style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltroEspecialistas()" > Filtrar por Especialista </button>
+<table  *ngIf="switchFiltrosEspecialistas" class="table"  >
+  <thead>
+    <tr>
+      <th scope="col">Nombre:</th>
+      <th scope="col">Apellido:</th>
+      <th  scope="col">Perfil:</th>  
+      <th  scope="col"> Acción </th>
+    </tr>
+  </thead>
+  <tbody *ngFor="let especialistA of listaEspeciaistas" >
+    <tr>
+      <td>{{especialistA?.nombre}}</td>
+      <td>{{especialistA?.apellido}}</td>
+      <td>{{especialistA.perfil}}</td>
+      <td><button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarEspecialistaParaFiltrar(especialistA)" > Elegir Especialista </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" >  Filtrar por Especialidad </button>
+<table *ngIf="turnosCargados" class="table"  >
+    <thead>
+      <tr>
+        <th scope="col">fecha</th>   
+        <th scope="col">Paciente</th>
+        <th scope="col">Obra Social</th>
+        <th scope="col">Especialista</th>   
+        <th scope="col">Area (Especialidad)</th>   
+        <th scope="col">Estado</th>  
+        <th scope="col">Acciones </th>
+
+      </tr>
+    </thead>
+    <tbody *ngFor="let turno of listaTurnos" >
+      <tr>
+        <td>{{turno.fecha.toLocaleDateString()}}</td>
+        <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
+        <td>{{turno.paciente.obraSocial}}</td>
+        <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
+        <td> {{turno.especialidad.especialidad}} </td>
+        <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
+        <td>
+            <button  style="margin: 10px;color: black; " type="button" class="btn btn-warning" > Cancelar Turno </button>
+            <button  style="margin: 10px;color: black; " type="button" class="btn btn-info" > Escribir reseña </button>
+        </td>
+      </tr>
+    </tbody>
+</table>

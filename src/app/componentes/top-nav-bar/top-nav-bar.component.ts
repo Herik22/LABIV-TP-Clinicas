@@ -1,5 +1,6 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { setInterval } from 'timers';
 import { threadId } from 'worker_threads';
@@ -12,6 +13,7 @@ export class TopNavBarComponent implements OnInit {
 
   @Input() isLogged:boolean=false
   @Input() isAdmin:boolean=false
+
 
   constructor(private ruteo:Router,private apiFB:FirebaseService) {
 

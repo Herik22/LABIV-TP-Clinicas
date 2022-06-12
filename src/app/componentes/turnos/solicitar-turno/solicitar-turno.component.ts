@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { BrowserTestingModule } from '@angular/platform-browser/testing';
+import { Router } from '@angular/router';
 import { throws } from 'assert';
 import { normalize } from 'path';
+import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
+var uniqid = require('uniqid'); 
 
 @Component({
   selector: 'app-solicitar-turno',
@@ -25,12 +29,14 @@ export class SolicitarTurnoComponent implements OnInit {
   //Nombres colecciones
   nameCEspecialidades:string='especialidades'
   nameCollectionUsers:string='UsuariosColeccion'
+  nameCollectionTurnos:string='TurnosColeccion'
 
   //Selecciones
   tieneDiasDisponibles:boolean = true
   especialistaSelected:boolean = false //true user seleccionado false contrario 
   pacienteSelected:boolean = false
   isEspecialidadSelected:boolean = false
+  horaSelected:boolean=false
 
   especialistaSeleccionado:Usuario = new Usuario()
   especialidadSeleccionada:any
@@ -38,14 +44,14 @@ export class SolicitarTurnoComponent implements OnInit {
   fechaTurnoSelecciada:Date=new Date()
   horaSeleccionada:Date = new Date ()
 
-  constructor(private apiFB:FirebaseService) {
+  constructor(private apiFB:FirebaseService,private ruteo:Router) {
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
       if(res!=null){//EVENTO
 
          this.apiFB.getUser(res.uid).subscribe(resUSER=>{
-          console.log('USUARIO ACTUAL EN TURNOS')
+    
           let objRta = resUSER.data()
-           console.log(resUSER.data())
+      
 
           this.currenUser.nombre = objRta?.['nombre']
           this.currenUser.apellido = objRta?.['apellido']
@@ -57,8 +63,7 @@ export class SolicitarTurnoComponent implements OnInit {
           this.currenUser.obraSocial = objRta?.['obraSocial']
           this.currenUser.perfil = objRta?.['perfil']
           this.currenUser.uid = objRta?.['uid']
-          
-
+          this.currenUser.especialidad = objRta?.['especialidad']
          })
       }else{
     
@@ -72,6 +77,8 @@ export class SolicitarTurnoComponent implements OnInit {
           if(value.perfil==='Especialista'){
             let newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
             newUser.especialidad = value.especialidad
+            newUser.uid = value.uid
+            newUser.perfil = value.perfil
             newArray.push(newUser)
           }
         })
@@ -143,6 +150,7 @@ export class SolicitarTurnoComponent implements OnInit {
   }
   seleccionarHora(hora:Date){
     this.horaSeleccionada = hora
+    this.horaSelected=true
     console.log('HORA SELECCIONADA')
     console.log(hora)
   }
@@ -150,6 +158,7 @@ export class SolicitarTurnoComponent implements OnInit {
     this.pacienteSelected=true
     this.PacienteSeleccionado= Paciente
   }
+
 
   //guarda los proximos 15 días a partir de la fecha.  
   obtenerProximosDias(){
@@ -162,7 +171,6 @@ export class SolicitarTurnoComponent implements OnInit {
 
       if(dia.toDateString().split(" ")[0] != "Sun") // validamos que en el día si abra la clinica
       {
-        console.log(dia.toLocaleDateString())
         this.dias.push(dia);
       }
       
@@ -213,6 +221,42 @@ export class SolicitarTurnoComponent implements OnInit {
     this.horasDisponibles.push(i)
     console.log(`${i.getHours()}:${i.getMinutes()}`);//formateadorFecha.format(i)
   }
-}
+  }
+
+  crearTurno(){
+    //Paciente seleccionado
+    //Especialista seleccionado
+    //Especialidad seleccionada
+    //fechaTurno seleccionada
+    let newTurno = new Turno()
+    let idTurno = uniqid()
+
+    if(!this.currenUser.isAdmin){
+      newTurno.paciente = this.currenUser
+    }else{
+      newTurno.paciente = this.PacienteSeleccionado
+    }
+    newTurno.duracion = this.especialidadSeleccionada.disponibilidad
+    newTurno.especialista = this.especialistaSeleccionado
+    newTurno.especialidad=this.especialidadSeleccionada
+    newTurno.fecha=this.horaSeleccionada
+    newTurno.status=1 // pendiente
+    newTurno.id=idTurno
+  
+
+    console.log('NEW TURNO')
+    console.log(newTurno)
+    //guardar en la coleccion el opbjeto
+     //this.auxAdmin.uid = rta.user?.uid
+     let rtaGuardarAdmin = this.apiFB.addDocumentoaColeccion(this.nameCollectionTurnos,idTurno,JSON.parse(JSON.stringify(newTurno)))
+     //this.loading=false
+     rtaGuardarAdmin.status? alert('Se ha creado el turno'):alert('ERROR AL CREAR EL TURNO ')
+     !rtaGuardarAdmin.status && setTimeout(()=>{
+      window.location.reload()
+    },2000)
+ 
+     rtaGuardarAdmin.status && this.ruteo.navigate(['/bienvenida'])    
+    
+  }
 
 }
