@@ -5,7 +5,6 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Usuario } from 'src/app/entidades/usuario';
 var uniqid = require('uniqid'); 
 
-import { Especialista } from 'src/app/entidades/especialista';
 @Component({
 
   selector: 'app-form-u',
@@ -89,14 +88,14 @@ export class FormUComponent implements OnInit {
     if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
       this.listaEspecialidades.forEach(value=>{
         if(value.id === this.formaEspecialista.value.especialidad){
-          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30})
+          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30,diasDisponibles:[]})
         }
       })
     }else{ 
       let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad}
       let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
       if (rtaGuardarEspecialidad.status){
-        this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30})
+        this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30,diasDisponibles:[]})
       }else{
         alert('error al guardar la especialidad') 
         return

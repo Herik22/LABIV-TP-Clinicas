@@ -13,6 +13,9 @@ export class PerfilComponent implements OnInit {
   auxUsuario:Usuario=new Usuario()
   especialidadSelected:any={"especilidaD":'','disponibilidad':0,'id':0}
   newDisponibilidad:number=0
+  diasSemana:any[]=[{id:1,name:'Lunes'},{id:2,name:'Martes'},{id:3,name:'Miercoles'},{id:4,name:'Jueves'},{id:5,name:'Viernes'},{id:6,name:'Sabados'}]
+  diasSeleccionados:number[]=[]
+
   constructor(private apiFB:FirebaseService) { 
 
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
@@ -43,7 +46,7 @@ export class PerfilComponent implements OnInit {
   selectedEspecialidad(id:string){
     this.auxUsuario.especialidad.forEach(value=>{
       if(value.id === id){
-        this.especialidadSelected=value
+        this.especialidadSelected=value // obtengo la especialidad seleccionada
       }
     })
   }
@@ -51,12 +54,13 @@ export class PerfilComponent implements OnInit {
   actualizarDuracionEspecialidad(idEspecialidad:string){
 
     // el especiaño
-    let specialidades = this.auxUsuario.especialidad
+    let specialidades = this.auxUsuario.especialidad // obtengo el listado de especialidades del usuarios actual 
     
-    let newEspecialidades = specialidades.map(value=>{
+    let newEspecialidades = specialidades.map(value=>{ //obtengo un nuievo array de especialidades segun 
       
-      if(idEspecialidad === value.id){
-        value.disponibilidad = this.newDisponibilidad
+      if(idEspecialidad === value.id){ // obtengo la especialidad que quiero modificar. 
+        value.disponibilidad = this.newDisponibilidad // seteo la nueva cantidad de minutos para el turno 
+        value.diasDisponibles = this.diasSeleccionados
       }
       return value
   })
@@ -99,6 +103,27 @@ export class PerfilComponent implements OnInit {
       })
       
     })
+  }
+  seleccionarDia(dia:number){
+    
+    let valido= false
+
+    if(this.diasSeleccionados.length>0){
+      
+      valido = this.diasSeleccionados.includes(dia)
+      if(!valido){
+        alert('Dia agregado a tus horarios!')
+        this.diasSeleccionados.push(dia)
+      }else{
+        alert('ya seleccionaste este día') 
+      }
+    
+    }else{
+      this.diasSeleccionados.push(dia)
+    }
+    
+    console.log(this.diasSeleccionados)
+ 
   }
   ngOnInit(): void {
   }

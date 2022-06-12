@@ -39,6 +39,9 @@
             </table>
             <span class="text-primary text-center" style="font-size: 25px;">Disponibilidad </span>
             <hr class="my-4">
+            <label for="selecDia" class="form-label">Selecciona tus Días disponibles</label>  
+            <button *ngFor="let dia_ of diasSemana" class=" btn btn-success"  type="submit" (click)="seleccionarDia(dia_.id)" style="margin: 10px;"  > {{dia_.name}} </button>
+            <hr class="my-4">
             <label for="firstName" class="form-label">Duracion (min)</label>   
             <span class="input-group-text">Actual: {{especialidadSelected.disponibilidad}} min </span>     
             <input type="number" class="form-control" id="firstName" placeholder="Ingresa tu disponibilidad"   [(ngModel)]="newDisponibilidad"   >

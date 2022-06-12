@@ -1,4 +1,21 @@
-.container {
-    max-width: 960px;
-  }
-  
+
+body, html {
+  height: 100%;
+}
+
+
+
+  .banner{
+    height: 100%;
+    margin-top: 100px;
+    //background: #fff;
+    background: url("https://static.vecteezy.com/system/resources/previews/002/109/118/large_2x/abstract-defocused-hospital-and-clinic-interior-free-photo.jpg") no-repeat bottom;
+    /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+    /* Full height */
+    height: 100%;
+
+}
+
