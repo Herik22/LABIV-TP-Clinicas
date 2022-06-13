@@ -1,3 +1,5 @@
+<h1> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
+
 
 <button class="btn btn-light" (click)="activarFiltrosUnicos()">
   <h3>{{switchActivarFiltros?'FILTRAR ⬆️':'FILTRAR ⬇️'}}  </h3>
@@ -5,7 +7,7 @@
 
 <div *ngIf="switchActivarFiltros">
   <button   style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltroEspecialistas()" > Filtrar por Especialista 👨🏼‍🔬 </button>
-  <button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" (click)="activarFiltroEspecialidades()">  Filtrar por Especialidad 🥼 </button>
+  <button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" (click)="activarFiltroEspecialidades()">  Filtrar por Especialidad 🥼</button>
   
   <button *ngIf="filtroAplicado" style="margin: 10px;color: white; " type="button" class="btn btn-danger" (click)="eliminarFiltros()"> ❌ Eliminar Filtros ❌ </button>
 </div>
@@ -72,9 +74,12 @@
         <td> {{turno.especialidad.especialidad}} </td>
         <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
         <td>
-            <button *ngIf="turno.status == 1"  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)" > Cancelar Turno </button>
-            
+            <button *ngIf="turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
         </td>
+        <td>
+          <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
+        </td>
+    
       </tr>
     </tbody>
 </table>
@@ -104,6 +109,36 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" [disabled]="formaComentario.invalid" (click)="cancelarTurnoDefinitivo()">Cancelar  Turno</button>
       </div>
     </form>
+    </div>
+  </div>
+</div>
+<!-- Modal Reseñas -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reseñas / Comentarios del turno ({{turnoSelectedForComentary.id}}) </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+
+      <div class="modal-body">
+        <h3>Comentario:</h3>
+        <p>
+          {{turnoSelectedForComentary.comentario}}
+        </p>
+        <h3>Reseña:</h3>
+        <p>
+          {{turnoSelectedForComentary.resenia}}
+        </p>
+      </div>
+      
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cerrar </button>
+      
+      </div>
+   
     </div>
   </div>
 </div>

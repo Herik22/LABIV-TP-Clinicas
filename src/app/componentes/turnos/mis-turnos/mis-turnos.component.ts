@@ -2,21 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
-
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
-
-
 @Component({
-  selector: 'app-turnos-clinica',
-  templateUrl: './turnos-clinica.component.html',
-  styleUrls: ['./turnos-clinica.component.scss']
+  selector: 'app-mis-turnos',
+  templateUrl: './mis-turnos.component.html',
+  styleUrls: ['./mis-turnos.component.scss']
 })
-export class TurnosClinicaComponent implements OnInit {
+export class MisTurnosComponent implements OnInit {
 
   currenUser:Usuario = new Usuario()
   nameCollectionTurnos:string='TurnosColeccion'
   listaTurnos:Turno[]=[]
   listaAuxTurnos:Turno[]=[]
+  turnosCargados:boolean = false
 
   listaEspedialidades:any[]=[] //especialidades
   listaEspeciaistas:Usuario[]=[] //especialista
@@ -27,19 +25,16 @@ export class TurnosClinicaComponent implements OnInit {
   switchFiltroEspecialidades:boolean = false
   switchActivarFiltros:boolean = false
   filtroAplicado:boolean = false
-  
-  turnosCargados:boolean = false
   turnoSelectedForComentary:Turno = new Turno()
-
   formaComentario:FormGroup;
-  constructor(private fb:FormBuilder,private apiFB:FirebaseService) { 
-
+  
+  constructor(private fb:FormBuilder,private apiFB:FirebaseService) {
     this.formaComentario = this.fb.group({
       'comentario':['',[Validators.required,]],
      
     })
 
-    
+
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
       if(res!=null){//EVENTO
 
@@ -58,39 +53,53 @@ export class TurnosClinicaComponent implements OnInit {
           this.currenUser.perfil = objRta?.['perfil']
           this.currenUser.uid = objRta?.['uid']
           this.currenUser.especialidad = objRta?.['especialidad']
+
+          this.apiFB.getCollection(this.nameCollectionTurnos).subscribe(res=>{
+       
+            let newArray:Turno[]=[]
+            res.forEach(value=>{
+      
+                let newTurno = new Turno()
+                newTurno.duracion = value.duracion
+               /* newTurno.especialista = new Usuario(value.especialista.nombre,value.especialista.apellido,value.especialista.edad,value.especialista.dni,value.especialista.email,'',value.especialista.foto) 
+                newTurno.especialista.obraSocial = value.especialista.obraSocial
+                newTurno.especialista.uid = value.especialista.uid
+                newTurno.especialista.perfil = value.especialista.perfil 
+                */ 
+                newTurno.especialidad= value.especialidad
+                newTurno.especialista = value.especialista
+                newTurno.paciente = value.paciente
+                newTurno.fecha = new Date(value.fecha) 
+                newTurno.status= value.status // pendiente
+                newTurno.id= value.id
+                newTurno.calificacion=value.calificacion
+                newTurno.comentario=value.comentario
+                newTurno.resenia=value.resenia
+                
+
+                if(this.currenUser.perfil === 'Especialista'){
+                  if(newTurno.especialista.uid === this.currenUser.uid){
+                    newArray.push(newTurno)
+                  }  
+                }else if(this.currenUser.perfil === 'Paciente'){
+                  if(newTurno.paciente.uid === this.currenUser.uid){
+                    newArray.push(newTurno)
+                  } 
+                }
+                    
+            })
+            
+            this.listaTurnos=newArray
+            this.listaAuxTurnos=newArray
+            this.turnosCargados=true
+      
+        })
          })
       }else{
     
       }
     }) 
-    this.apiFB.getCollection(this.nameCollectionTurnos).subscribe(res=>{
-       
-      let newArray:Turno[]=[]
-      res.forEach(value=>{
-
-          let newTurno = new Turno()
-          newTurno.duracion = value.duracion
-         /* newTurno.especialista = new Usuario(value.especialista.nombre,value.especialista.apellido,value.especialista.edad,value.especialista.dni,value.especialista.email,'',value.especialista.foto) 
-          newTurno.especialista.obraSocial = value.especialista.obraSocial
-          newTurno.especialista.uid = value.especialista.uid
-          newTurno.especialista.perfil = value.especialista.perfil 
-          */ 
-          newTurno.especialidad= value.especialidad
-          newTurno.especialista = value.especialista
-          newTurno.paciente = value.paciente
-          newTurno.fecha = new Date(value.fecha) 
-          newTurno.status= value.status // pendiente
-          newTurno.id= value.id
-
-          newArray.push(newTurno)
-        
-      })
-      
-      this.listaTurnos=newArray
-      this.listaAuxTurnos=newArray
-      this.turnosCargados=true
-
-  })
+   
     this.apiFB.getCollection(this.nameCollectionUsers).subscribe(res=>{
        
       let newArray:Usuario[]=[]
@@ -109,12 +118,9 @@ export class TurnosClinicaComponent implements OnInit {
     this.listaEspedialidades= res
   })
 
-  }
+   }
 
-  ngOnInit(): void {
-  }
-
-  obtenerEstado(status:number){
+   obtenerEstado(status:number){
     let estado = 'FALSO'
 
     switch(status){
@@ -135,50 +141,49 @@ export class TurnosClinicaComponent implements OnInit {
 
   }
 
-
   activarFiltrosUnicos(){
-   this.switchActivarFiltros =  !this.switchActivarFiltros 
-  }
-
-  activarFiltroEspecialistas(){
-    if(!this.switchFiltroEspecialista){
-      this.switchFiltroEspecialidades=false
-    }
-    this.switchFiltroEspecialista = !this.switchFiltroEspecialista
-    
-  }
-  activarFiltroEspecialidades(){
-    if(!this.switchFiltroEspecialidades){
-      this.switchFiltroEspecialista=false
-    }
-    this.switchFiltroEspecialidades = !this.switchFiltroEspecialidades
-  }
-
-  eliminarFiltros(){
-    this.listaTurnos = this.listaAuxTurnos
-    this.switchFiltroEspecialista=false
-    this.switchFiltroEspecialidades=false
-    this.filtroAplicado=false
-
-  }
-
-
-  seleccionarEspecialistaParaFiltrar(especialista:Usuario){
-    this.filtrarTurnosEspecialista(especialista)
-    this.filtroAplicado=true
-    this.switchFiltroEspecialista=false
-  }
-  seleccionarEspecialidadParaFiltrar(especialidad:any){
-    this.filtrarTurnosxEspecialidad(especialidad)
-    this.filtroAplicado=true
-    this.switchFiltroEspecialidades=false
-  }
-  seleccionarTurnoParaComentario(turno:Turno){
+    this.switchActivarFiltros =  !this.switchActivarFiltros 
+   }
+ 
+   activarFiltroEspecialistas(){
+     if(!this.switchFiltroEspecialista){
+       this.switchFiltroEspecialidades=false
+     }
+     this.switchFiltroEspecialista = !this.switchFiltroEspecialista
+     
+   }
+   activarFiltroEspecialidades(){
+     if(!this.switchFiltroEspecialidades){
+       this.switchFiltroEspecialista=false
+     }
+     this.switchFiltroEspecialidades = !this.switchFiltroEspecialidades
+   }
+ 
+   eliminarFiltros(){
+     this.listaTurnos = this.listaAuxTurnos
+     this.switchFiltroEspecialista=false
+     this.switchFiltroEspecialidades=false
+     this.filtroAplicado=false
+ 
+   }
+ 
+   seleccionarTurnoParaComentario(turno:Turno){
     this.turnoSelectedForComentary = turno
   }
 
 
-  filtrarTurnosEspecialista(esp:Usuario){
+   seleccionarEspecialistaParaFiltrar(especialista:Usuario){
+     this.filtrarTurnosxEspecialista(especialista)
+     this.filtroAplicado=true
+     this.switchFiltroEspecialista=false
+   }
+   seleccionarEspecialidadParaFiltrar(especialidad:any){
+     this.filtrarTurnosxEspecialidad(especialidad)
+     this.filtroAplicado=true
+     this.switchFiltroEspecialidades=false
+   }
+
+   filtrarTurnosxEspecialista(esp:Usuario){
     let listaFiltrada = this.listaAuxTurnos.filter(value=> {
       return value.especialista.uid == esp.uid 
       })
@@ -191,7 +196,6 @@ export class TurnosClinicaComponent implements OnInit {
       })
     this.listaTurnos=listaFiltrada
   }
-
 
   preCancelarTurno(turno:Turno){
 
@@ -232,7 +236,7 @@ export class TurnosClinicaComponent implements OnInit {
     })
   }
 
-
-
+  ngOnInit(): void {
+  }
 
 }
