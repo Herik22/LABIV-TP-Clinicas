@@ -20,6 +20,7 @@
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
               <li><a class="dropdown-item"  style="color: grey;"  (click)="goToUsuarios('listado')" >Listado</a></li>
               <li><a class="dropdown-item"  style="color: grey;" (click)="goToUsuarios('alta')">Alta Usuarios</a></li>
+              <li><a class="dropdown-item"  style="color: grey;" (click)="goToUsuarios('misTurnos')">Mis Turbos </a></li>
             </ul>
           </li>
           <li *ngIf="isLogged" class="nav-item dropdown">
@@ -27,7 +28,7 @@
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
               <li><a class="dropdown-item"  style="color: grey;"  (click)="goToTurnos('solicitarTurno')" > Solicitar Turno </a></li>
               <li *ngIf="isAdmin" ><a class="dropdown-item"  style="color: grey;"  (click)="goToTurnos('turnosClinica')" > Turnos de la clinica </a></li>
-              
+              <li *ngIf="perfilUser == 'Paciente' || perfilUser == 'Especialista'  " ><a class="dropdown-item"  style="color: grey;" (click)="goToTurnos('misTurnos')">Mis Turnos </a></li>
             </ul>
           </li>
 

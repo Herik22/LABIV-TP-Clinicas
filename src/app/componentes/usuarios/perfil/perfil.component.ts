@@ -67,15 +67,24 @@ export class PerfilComponent implements OnInit {
       return value
   })
 
+  this.apiFB.updaterUsuarioProperty(this.auxUsuario.uid,{especialidad:newEspecialidades})
+  .then(rta=>{
+    console.log('editada la duracion')
+    this.reLoad()
+  })
+  .catch(err=>{
+    console.log('ocurrio un error edirtando la especialidad ' + err)
+  })
   
-  this.apiFB.updateDuracion(this.auxUsuario.uid,{... this.auxUsuario,especialidad:newEspecialidades})
+
+  /*this.apiFB.updateDuracion(this.auxUsuario.uid,{... this.auxUsuario,especialidad:newEspecialidades})
   .then(rta=>{
     console.log('editada la duracion')
     this.reLoad()
   })
   .catch(err=>{
     console.log('ocurrio un error edirtando la duracion ' + err)
-  })
+  }) */ 
 
  
 

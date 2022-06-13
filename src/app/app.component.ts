@@ -12,6 +12,7 @@ export class AppComponent {
   title = 'tpClinicas';
   isLogged:boolean=false;
   isAdministrador:boolean=false;
+  perfil:string=''
 
   constructor(private servicioLogin:FirebaseService,){
       
@@ -25,6 +26,7 @@ export class AppComponent {
 
           this.isAdministrador= objRta?.['isAdmin']
           this.isLogged=true 
+          this.perfil = objRta?.['perfil']
 
           this.currenUser.nombre = objRta?.['nombre']
           this.currenUser.apellido = objRta?.['apellido']

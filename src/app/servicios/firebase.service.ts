@@ -3,6 +3,7 @@ import {AngularFireAuth} from '@angular/fire/compat/auth'
 import { AngularFirestore,AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import 'firebase/compat/storage'
 import firebase from 'firebase/compat/app';
+import { Turno } from '../entidades/turnos';
 
 @Injectable({
   providedIn: 'root'
@@ -114,8 +115,20 @@ export class FirebaseService {
       valid:true ,
     });
   }
- updateDuracion(idEspecialista:string|undefined,objActualizado:any): Promise<any> {
+  updateDuracion(idEspecialista:string|undefined,objActualizado:any): Promise<any> {
     return this.usuariosRef.doc(idEspecialista).update(objActualizado);
+  }
+  updaterUsuarioProperty(idUsuario:string|undefined,objConCambio:any): Promise<any> {
+    return this.usuariosRef.doc(idUsuario).update(objConCambio);
+   // return this.turnosRef.doc(idTurno).update(objActualizado);
+  }
+  updateStatus(idTurno:string|undefined,status_:number): Promise<any> {
+    return this.turnosRef.doc(idTurno).update({status:status_});
+   // return this.turnosRef.doc(idTurno).update(objActualizado);
+  }
+  updaterTurnoProperty(idTurno:string|undefined,objConCambio:any): Promise<any> {
+    return this.turnosRef.doc(idTurno).update(objConCambio);
+   // return this.turnosRef.doc(idTurno).update(objActualizado);
   }
   getUsuariosColl(){
     return this.usuariosRef.get();

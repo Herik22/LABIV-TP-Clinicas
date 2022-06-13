@@ -13,7 +13,7 @@ export class TopNavBarComponent implements OnInit {
 
   @Input() isLogged:boolean=false
   @Input() isAdmin:boolean=false
-
+  @Input() perfilUser:string='false'
 
   constructor(private ruteo:Router,private apiFB:FirebaseService) {
 
