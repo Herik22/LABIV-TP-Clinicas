@@ -11,7 +11,7 @@
             <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['bienvenida']" >Home</a>
           </li>
           
-          <li class="nav-item">
+          <li *ngIf="isLogged " class="nav-item">
             <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['usuarios/perfil']" >Perfil</a>
           </li>
 
@@ -20,7 +20,6 @@
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
               <li><a class="dropdown-item"  style="color: grey;"  (click)="goToUsuarios('listado')" >Listado</a></li>
               <li><a class="dropdown-item"  style="color: grey;" (click)="goToUsuarios('alta')">Alta Usuarios</a></li>
-              <li><a class="dropdown-item"  style="color: grey;" (click)="goToUsuarios('misTurnos')">Mis Turbos </a></li>
             </ul>
           </li>
           <li *ngIf="isLogged" class="nav-item dropdown">

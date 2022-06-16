@@ -3,12 +3,17 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
+import { errorMonitor } from 'stream';
 @Component({
   selector: 'app-mis-turnos',
   templateUrl: './mis-turnos.component.html',
   styleUrls: ['./mis-turnos.component.scss']
 })
 export class MisTurnosComponent implements OnInit {
+
+
+  auxCalificacion:number=0
+  rechazarTurno:boolean=false
 
   currenUser:Usuario = new Usuario()
   nameCollectionTurnos:string='TurnosColeccion'
@@ -18,22 +23,34 @@ export class MisTurnosComponent implements OnInit {
 
   listaEspedialidades:any[]=[] //especialidades
   listaEspeciaistas:Usuario[]=[] //especialista
+  listaPacientes:Usuario[]=[] //especialista
   nameCEspecialidades:string='especialidades'
   nameCollectionUsers:string='UsuariosColeccion'
 
+  switchFiltroPaciente:boolean = false
   switchFiltroEspecialista:boolean = false
   switchFiltroEspecialidades:boolean = false
   switchActivarFiltros:boolean = false
   filtroAplicado:boolean = false
   turnoSelectedForComentary:Turno = new Turno()
   formaComentario:FormGroup;
+  formaEncuesta:FormGroup;
+  formaCalificacion:FormGroup
   
   constructor(private fb:FormBuilder,private apiFB:FirebaseService) {
     this.formaComentario = this.fb.group({
       'comentario':['',[Validators.required,]],
      
     })
+    this.formaEncuesta = this.fb.group({
 
+      'opinion':['',[Validators.required,]],
+      'sugerencia':['',[Validators.required,]],
+     
+    })
+    this.formaCalificacion = this.fb.group({
+      'comentarioCalificacion':['',[Validators.required,]],
+    })
 
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
       if(res!=null){//EVENTO
@@ -61,6 +78,8 @@ export class MisTurnosComponent implements OnInit {
       
                 let newTurno = new Turno()
                 newTurno.duracion = value.duracion
+                newTurno.encuestaCompletada= value.encuestaCompletada
+                newTurno.encuesta=value.encuesta
                /* newTurno.especialista = new Usuario(value.especialista.nombre,value.especialista.apellido,value.especialista.edad,value.especialista.dni,value.especialista.email,'',value.especialista.foto) 
                 newTurno.especialista.obraSocial = value.especialista.obraSocial
                 newTurno.especialista.uid = value.especialista.uid
@@ -103,16 +122,27 @@ export class MisTurnosComponent implements OnInit {
     this.apiFB.getCollection(this.nameCollectionUsers).subscribe(res=>{
        
       let newArray:Usuario[]=[]
+      let newArrayPacientes:Usuario[]=[]
       res.forEach(value=>{
         if(value.perfil==='Especialista'){
-          let newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
+          const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
           newUser.especialidad = value.especialidad
           newUser.uid = value.uid
           newArray.push(newUser)
+        }else if(value.perfil==='Paciente'){
+          const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
+          newUser.obraSocial = value.obraSocial
+          newUser.perfil= value.perfil
+          newUser.uid = value.uid
+          newArrayPacientes.push(newUser)
         }
-      })
-    
+      }) 
+      console.log('newArray')
+    console.log(newArray)
+    console.log('newArrayPacientes')
+    console.log(newArrayPacientes)
     this.listaEspeciaistas=newArray
+    this.listaPacientes=newArrayPacientes
   })
   this.apiFB.getCollection(this.nameCEspecialidades).subscribe(res=>{
     this.listaEspedialidades= res
@@ -128,11 +158,14 @@ export class MisTurnosComponent implements OnInit {
         estado = 'PENDIENTE ⏰'
         break;
       case 2:
-        estado = '☑️ ACEPTADO ☑️'
+        estado = '👌🏼 ACEPTADO 👌🏼 '
         break;
       case 3:
         estado = ' ✅ REALIZADO ✅ '
         break;
+      case 4:
+          estado = ' ❌ RECHAZADO ❌'
+          break;
       case 6:
         estado = '🚨 CANCELADO 🚨'
         break;     
@@ -148,13 +181,31 @@ export class MisTurnosComponent implements OnInit {
    activarFiltroEspecialistas(){
      if(!this.switchFiltroEspecialista){
        this.switchFiltroEspecialidades=false
+       
      }
      this.switchFiltroEspecialista = !this.switchFiltroEspecialista
+    
+     
      
    }
+   activarFiltroPacientes(){
+    if(!this.switchFiltroPaciente){
+      this.switchFiltroEspecialidades=false
+      
+    }
+    this.switchFiltroPaciente = !this.switchFiltroPaciente
+   
+    
+    
+  }
    activarFiltroEspecialidades(){
      if(!this.switchFiltroEspecialidades){
        this.switchFiltroEspecialista=false
+     }
+     console.log(this.currenUser.perfil)
+     console.log(this.currenUser.especialidad)
+     if(this.currenUser.perfil=='Especialista'){
+      this.listaEspedialidades = this.currenUser.especialidad
      }
      this.switchFiltroEspecialidades = !this.switchFiltroEspecialidades
    }
@@ -171,19 +222,31 @@ export class MisTurnosComponent implements OnInit {
     this.turnoSelectedForComentary = turno
   }
 
-
+  seleccionarPacienteParaFiltrar(paciente:Usuario){
+    this.filtrarTurnosxPaciente(paciente)
+    this.filtroAplicado=true
+    this.switchFiltroPaciente=false
+ }
    seleccionarEspecialistaParaFiltrar(especialista:Usuario){
      this.filtrarTurnosxEspecialista(especialista)
      this.filtroAplicado=true
      this.switchFiltroEspecialista=false
-   }
+  }
    seleccionarEspecialidadParaFiltrar(especialidad:any){
      this.filtrarTurnosxEspecialidad(especialidad)
      this.filtroAplicado=true
      this.switchFiltroEspecialidades=false
-   }
+  }
 
-   filtrarTurnosxEspecialista(esp:Usuario){
+
+  filtrarTurnosxPaciente(esp:Usuario){
+    let listaFiltrada = this.listaAuxTurnos.filter(value=> {
+      return value.paciente.uid == esp.uid 
+      })
+    this.listaTurnos=listaFiltrada
+  }
+
+  filtrarTurnosxEspecialista(esp:Usuario){
     let listaFiltrada = this.listaAuxTurnos.filter(value=> {
       return value.especialista.uid == esp.uid 
       })
@@ -197,21 +260,25 @@ export class MisTurnosComponent implements OnInit {
     this.listaTurnos=listaFiltrada
   }
 
-  preCancelarTurno(turno:Turno){
+  aceptarTurno(turno:Turno){
+    this.apiFB.updaterTurnoProperty(turno.id,{status:2})
+    .then(rta=>{
+      console.log('ACEPTADO el turno ')
+     //actualizar listados 
+    })
+    .catch(err=>{
+      console.log('ocurrio un error ACEPTANDO EL TURNO  ' + err)
+    })
+  }
 
-    /*let specialidades = this.auxUsuario.especialidad // obtengo el listado de especialidades del usuarios actual 
-      
-      let newEspecialidades = specialidades.map(value=>{ //obtengo un nuievo array de especialidades segun 
-        
-        if(idEspecialidad === value.id){ // obtengo la especialidad que quiero modificar. 
-          value.disponibilidad = this.newDisponibilidad // seteo la nueva cantidad de minutos para el turno 
-          value.diasDisponibles = this.diasSeleccionados
-        }
-        return value
-    }) */  // el especiaño
-  //turno.fecha = new Date(turno.fecha.getTime())
+  preCancelarTurno(turno:Turno,rechazado=0){
+
   console.log(turno)
   this.seleccionarTurnoParaComentario(turno)
+  
+  if(rechazado){
+    this.rechazarTurno=true
+  }
 
 
   }
@@ -222,9 +289,9 @@ export class MisTurnosComponent implements OnInit {
     .then(rta=>{
       console.log('editado el  Comentario ')
       this.formaComentario.setValue({comentario:''})
-      this.apiFB.updateStatus(this.turnoSelectedForComentary.id,6)
+      this.apiFB.updateStatus(this.turnoSelectedForComentary.id,this.rechazarTurno?4:6)
       .then(rta=>{
-        console.log('Cancelado el turno ')
+        console.log(this.rechazarTurno?'Rechazado el turno satisfactoriamente ':'Cancelado el turno ')
        //actualizar listados 
       })
       .catch(err=>{
@@ -234,6 +301,39 @@ export class MisTurnosComponent implements OnInit {
     .catch(err=>{
       console.log('ocurrio un error editando EL COMENTARIO ' + err)
     })
+  }
+
+  realizarEncuesta(turno:Turno){
+    console.log(turno)
+    this.seleccionarTurnoParaComentario(turno)
+  }
+  enviarEncuesta(){
+     console.log(this.formaEncuesta.value)
+     this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{encuestaCompletada:true,encuesta:{opinion:this.formaEncuesta.value.opinion,sugerencia:this.formaEncuesta.value.sugerencia}})
+     .then(rta=>{
+      this.formaEncuesta.setValue({opinion:' ',sugerencia:' '})
+
+      console.log('Encuesta Actualizada con exito!')
+     })
+     .catch(err=>{
+      console.log('error al enviar la encuesta'+ err)
+     })
+  }
+  realizarCalificacion(turno:Turno){
+    console.log(turno)
+    this.seleccionarTurnoParaComentario(turno)
+  }
+  enviarCalificacion(){
+    console.log(this.formaCalificacion.value)
+     this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{calificacion:{puntaje:this.auxCalificacion,comentario:this.formaCalificacion.value.comentarioCalificacion}})
+     .then(rta=>{
+      this.formaCalificacion.setValue({comentarioCalificacion:'',})
+
+      console.log('Calificacion Actualizada con exito!')
+     })
+     .catch(err=>{
+      console.log('error al enviar la Calificacion'+ err)
+     })
   }
 
   ngOnInit(): void {

@@ -1,17 +1,40 @@
-<h1> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
 
+<div class="text-center">
+  <h1> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
+</div>
 
 <button class="btn btn-light" (click)="activarFiltrosUnicos()">
   <h3>{{switchActivarFiltros?'FILTRAR ⬆️':'FILTRAR ⬇️'}}  </h3>
 </button>
 
 <div *ngIf="switchActivarFiltros">
-  <button   style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltroEspecialistas()" > Filtrar por Especialista 👨🏼‍🔬 </button>
+  <button *ngIf="currenUser.perfil != 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltroEspecialistas()" > Filtrar por Especialista 👨🏼‍🔬 </button>
+  <button *ngIf="currenUser.perfil == 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltroPacientes()" > Filtrar por Paciente  👨🏼⛑ </button>
   <button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" (click)="activarFiltroEspecialidades()">  Filtrar por Especialidad 🥼</button>
   
   <button *ngIf="filtroAplicado" style="margin: 10px;color: white; " type="button" class="btn btn-danger" (click)="eliminarFiltros()"> ❌ Eliminar Filtros ❌ </button>
 </div>
 
+
+<table  *ngIf="switchFiltroPaciente" class="table"  >
+  <thead>
+    <tr>
+      <th scope="col">Nombre:</th>
+      <th scope="col">Apellido:</th>
+      <th  scope="col">Perfil:</th>  
+      <th  scope="col"> Acción </th>
+    </tr>
+  </thead>
+  <tbody *ngFor="let paciente_Aux of listaPacientes" >
+    <tr>
+      <td>{{paciente_Aux?.nombre}}</td>
+      <td>{{paciente_Aux?.apellido}}</td>
+      <td>{{paciente_Aux.perfil}}</td>
+      <td><button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarPacienteParaFiltrar(paciente_Aux)" > Elegir Paciente </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 <table  *ngIf="switchFiltroEspecialista" class="table"  >
   <thead>
     <tr>
@@ -49,7 +72,7 @@
   </tbody>
 </table>
 
-<!-- LISTADO DE TDOSO LOS TURNOS -->
+<!-- LISTADO DE TODOS LOS TURNOS -->
 <table *ngIf="turnosCargados" class="table" >
     <thead>
       <tr>
@@ -74,10 +97,18 @@
         <td> {{turno.especialidad.especialidad}} </td>
         <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
         <td>
+          <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
+            <button *ngIf="turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
             <button *ngIf="turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
-        </td>
+            <button *ngIf="turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
+            <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
+            <button *ngIf="turno.status === 3 &&  turno.encuestaCompletada == false"  style="margin: 10px;color: black; " type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#exampleModal3" (click)="realizarEncuesta(turno)"  >  Realizar Encuesta  </button>
+            <button *ngIf=" turno.encuestaCompletada"  style="margin: 10px;color: black; " type="button" class="btn btn-success"    >Encuesta realizada  </button>
+            <button *ngIf="turno.status === 3 && !turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal4" (click)="realizarCalificacion(turno)"  >  Calificar  </button>
+            <button *ngIf="turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "   >  ✅ Calificado ✅   </button> 
+          </td>
         <td>
-          <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
+         
         </td>
     
       </tr>
@@ -88,8 +119,10 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+      <div class="modal-header"> <h1> {{rechazarTurno?'Rechazar Turno ':'Cancelar Turno'}} </h1> </div>
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Debes escribir un comentario para eliminar el turno ({{turnoSelectedForComentary.id}}) de {{turnoSelectedForComentary.paciente.nombre}} </h5>
+        
+        <h5 class="modal-title" id="exampleModalLabel"> Debes escribir un comentario para eliminar el turno ({{turnoSelectedForComentary.id}}) de {{turnoSelectedForComentary.paciente.nombre}} </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
@@ -106,21 +139,21 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar</button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" [disabled]="formaComentario.invalid" (click)="cancelarTurnoDefinitivo()">Cancelar  Turno</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" [disabled]="formaComentario.invalid" (click)="cancelarTurnoDefinitivo()"> {{rechazarTurno?'Rechazar Turno':' Cancelar  Turno'}}</button>
       </div>
     </form>
     </div>
   </div>
 </div>
+
 <!-- Modal Reseñas -->
-<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Reseñas / Comentarios del turno ({{turnoSelectedForComentary.id}}) </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
 
       <div class="modal-body">
         <h3>Comentario:</h3>
@@ -133,7 +166,6 @@
         </p>
       </div>
       
-
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cerrar </button>
       
@@ -142,3 +174,95 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Encuesta -->
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        
+       
+      </div>
+      <form [formGroup]="formaEncuesta" (ngSubmit)="enviarEncuesta()" > 
+      <div class="modal-body">
+        <div class="text-center">
+          <h5 class="modal-title" id="exampleModalLabel">Especialista 👨🏼‍🔬 {{turnoSelectedForComentary.especialista.nombre}} {{turnoSelectedForComentary.especialista.apellido}} </h5>    
+       
+          <h5 class="modal-title">{{turnoSelectedForComentary.especialidad?.especialidad}} </h5>
+          <img src={{turnoSelectedForComentary.especialidad?.img}}  alt="" width=150px>
+        </div>
+        
+        <label for="firstNamep" class="form-label" style="font-weight: bold;" > ¿Que tal estuvo la consulta? </label>
+        <textarea class="form-control" aria-label="With textarea" placeholder="" formControlName="opinion" > </textarea>
+        <small class="invalid" *ngIf="formaEncuesta.controls['opinion'].errors?.['required']&& formaEncuesta.controls['opinion'].touched" style="color:red ;">
+          el campo es requerido.
+       </small>
+        <label for="firstNamep" class="form-label"  style="font-weight: bold;" > ¿En que crees que  podriamos mejorar? </label>
+        <textarea class="form-control" aria-label="With textarea" placeholder="" formControlName="sugerencia" > </textarea>
+        <small class="invalid" *ngIf="formaEncuesta.controls['sugerencia'].errors?.['required']&& formaEncuesta.controls['sugerencia'].touched" style="color:red ;">
+          Esto nos ayuda a mejorar. 
+      </small>
+       
+
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar</button>
+        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" > Enviar Encuesta  </button>
+      
+      </div>
+    </form>
+   
+    </div>
+  </div>
+</div>
+<!-- Modal Calificacion -->
+<div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel4" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h5 class="text-center"> Calificacion </h5>
+      </div>
+      <div class=" text-center"> 
+        <h5 class="modal-title" id="exampleModalLabel">Especialista:👨🏼‍🔬  {{turnoSelectedForComentary.especialista.nombre}} {{turnoSelectedForComentary.especialista.apellido}} </h5>
+        <img src={{turnoSelectedForComentary.especialista.fotosPerfil[0]}}  class="text-center" alt="" width=100px height=100px>
+        
+      </div>
+      
+      <h4>Puntua la Consulta </h4>
+      <div class="rating"> 
+        <input type="radio" name="rating" value="5" id="5" [(ngModel)]="auxCalificacion">
+        <label for="5">☆</label> 
+        <input type="radio" name="rating" value="4" id="4" [(ngModel)]="auxCalificacion" >
+        <label for="4">☆</label>
+        <input type="radio" name="rating" value="3" id="3" [(ngModel)]="auxCalificacion">
+        <label for="3">☆</label>
+        <input type="radio" name="rating" value="2" id="2" [(ngModel)]="auxCalificacion">
+        <label for="2">☆</label>
+         <input type="radio" name="rating" value="1" id="1" [(ngModel)]="auxCalificacion">
+         <label for="1">☆</label>
+      </div>
+     
+      <form [formGroup]="formaCalificacion" (ngSubmit)="enviarCalificacion()" > 
+      <div class="modal-body">
+        
+        <label for="firstNamep" class="form-label"  style="font-weight: bold;" > Dejanos un comentario </label>
+        <textarea class="form-control" aria-label="With textarea" placeholder="Deja un comentario" formControlName="comentarioCalificacion" > </textarea>
+        <small class="invalid" *ngIf="formaCalificacion.controls['comentarioCalificacion'].errors?.['required']&& formaCalificacion.controls['comentarioCalificacion'].touched" style="color:red ;">
+          El comentario en necesario. 
+        </small>
+       
+
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar</button>
+        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="formaCalificacion.invalid" > Enviar Calificacion  </button>
+      
+      </div>
+    </form>
+   
+    </div>
+  </div>
+
+  

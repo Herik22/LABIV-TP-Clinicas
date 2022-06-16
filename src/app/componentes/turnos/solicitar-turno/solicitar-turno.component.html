@@ -1,20 +1,24 @@
-<main class="banner">
+<main class="banner" style="width: 100%; height:100% ">
 
   <!-- LISTADOS SI EL TURNO LO SOLICITA UN ADMIN-->
-  <div *ngIf="!especialistaSelected && currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
-    <h2> Selecciona al  Paciente </h2>
-    <div  *ngFor="let paciente of listaPacientes" class="col">
-      <div class="card" style="width:200px">
-        <button class="btn" (click)="seleccionarPaciente(paciente)">
-        <img class="card-img-top" src={{paciente.fotosPerfil[0]}} alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{paciente.nombre}} {{paciente.apellido}} </h4>
-          <p class="card-text">Obra Social {{paciente.obraSocial}} </p>
+  <div *ngIf="!especialistaSelected && currenUser.isAdmin "  class="d-flex " style="justify-content: center; align-items:center; align-content:center; " >
+    <div *ngIf=" !pacienteSelected">
+      <h2> Selecciona al  
+        Paciente </h2>
+      <div  *ngFor="let paciente of listaPacientes" class="col">
+        <div class="card" style="width:200px">
+          <button class="btn" (click)="seleccionarPaciente(paciente)">
+          <img class="card-img-top" src={{paciente.fotosPerfil[0]}} alt="Card image" height="250px">
+          <div class="card-body">
+            <h4 class="card-title">{{paciente.nombre}} {{paciente.apellido}} </h4>
+            <p class="card-text">Obra Social {{paciente.obraSocial}} </p>
+          </div>
+        </button>
         </div>
-      </button>
+  
       </div>
-   
     </div>
+    
 
     <div *ngIf="pacienteSelected">
       <h2> Selecciona al  Especialista </h2>
@@ -37,6 +41,14 @@
       </div>
     </div>
   </div>
+
+
+
+
+
+
+
+
 
    <!-- LISTADOS SI EL TURNO LO SOLICITA UN PACIENTE-->
 	<div *ngIf="!especialistaSelected && !currenUser.isAdmin "  class="row row-cols-1 row-cols-md-2 g-4">
@@ -63,11 +75,11 @@
   </div>
 
   <!-- LISTADO DE ESPECIALIDADES DEL ESPECIALISTA SELCCIONADO-->
-  <div *ngIf="especialistaSelected && !isEspecialidadSelected || especialistaSelected && currenUser.isAdmin && pacienteSelected  "  class="row row-cols-1 row-cols-md-2 g-4">
+  <div *ngIf="especialistaSelected && !isEspecialidadSelected || especialistaSelected && currenUser.isAdmin && pacienteSelected && !isEspecialidadSelected  "  class="row row-cols-1 row-cols-md-2 g-4">
     <div  *ngFor="let item of listaEspedialidades" class="col">
       <div class="card" style="width:400px">
         <button class="btn" (click)="seleccionarEspecialidad(item)">
-        <img class="card-img-top" src='https://www.infobae.com/new-resizer/z2MFc71qo7UzUeb53tcI9ma5ZwY=/1200x900/filters:format(webp):quality(85)//s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2018/01/09172720/PTM-visita-pediatraApertura.jpg' alt="Card image" height="250px">
+        <img class="card-img-top" src={{item.img}} alt="Card image" height="250px">
         <div class="card-body">
           <h4 class="card-title">{{item.especialidad}}</h4>
         </div>
@@ -85,7 +97,7 @@
     <button class="btn" >   </button>
     
     <div  class="col">
-      <div class="card" style="width:400px">
+      <div class="card" style="width:300px">
         <button class="btn">
         <img class="card-img-top" src='https://www.infobae.com/new-resizer/z2MFc71qo7UzUeb53tcI9ma5ZwY=/1200x900/filters:format(webp):quality(85)//s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2018/01/09172720/PTM-visita-pediatraApertura.jpg' alt="Card image" height="250px">
         <div class="card-body">

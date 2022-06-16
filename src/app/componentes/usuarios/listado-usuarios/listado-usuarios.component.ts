@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
+import * as XLSX from 'xlsx'; 
+var uniqid = require('uniqid'); 
 
 @Component({
   selector: 'app-listado-usuarios',
@@ -20,6 +22,8 @@ export class ListadoUsuariosComponent implements OnInit {
     })    
    }
    
+
+
   updateValidate(idEspecialista:string){
     this.firebaseApi.autorizarUsuario(idEspecialista)
     .then(rta=>{  
@@ -35,6 +39,21 @@ export class ListadoUsuariosComponent implements OnInit {
         this.listaUsuarios.push({...value.data(),idCollection:value.id})
       })
     })    
+  }
+  generarExcel(){
+    
+    let nameFile = `reporteUsers_${uniqid()}`
+    
+    let element = document.getElementById('excel-table'); // <----- ID 
+     const ws: XLSX.WorkSheet =XLSX.utils.table_to_sheet(element);
+
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+  
+    XLSX.writeFile(wb, nameFile);
+   
   }
   ngOnInit(): void {
   }

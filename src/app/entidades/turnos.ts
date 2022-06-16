@@ -9,9 +9,10 @@ export class Turno {
     fecha:Date = new Date()
     comentario:string=''
     resenia:string=''
-    status:number=0 //0-false  1-Pendiente 2-ACEPTADO  3-Realizado  4-   6Cancelado 
+    status:number=0 //0-false  1-Pendiente 2-ACEPTADO  3-Realizado  4-Rechazado   6Cancelado 
     encuestaCompletada:boolean=false
-    calificacion:number=0
+    calificacion:any=0
+    encuesta:any=''
     id:string=''
     
     constructor(duracion:number=30){

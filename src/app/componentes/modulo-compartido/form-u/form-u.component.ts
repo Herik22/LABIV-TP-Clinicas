@@ -13,6 +13,8 @@ var uniqid = require('uniqid');
 })
 export class FormUComponent implements OnInit {
 
+  imgEspecialidadDefecto = 'https://firebasestorage.googleapis.com/v0/b/tp-clinicas.appspot.com/o/fotosEspecialidades%2Fgeneric.png?alt=media&token=39c5c3c9-962c-482f-bb92-0f7640e07067'
+
   listaEspecialidades:any[]=[]
   
   fotoEspecialista:any
@@ -88,11 +90,11 @@ export class FormUComponent implements OnInit {
     if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
       this.listaEspecialidades.forEach(value=>{
         if(value.id === this.formaEspecialista.value.especialidad){
-          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30,diasDisponibles:[]})
+          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30,diasDisponibles:[],img:value.img})
         }
       })
     }else{ 
-      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad}
+      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad,img:this.imgEspecialidadDefecto}
       let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
       if (rtaGuardarEspecialidad.status){
         this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30,diasDisponibles:[]})
