@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
+import { HistoriaClinica } from 'src/app/entidades/historiaClinica';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
-import { errorMonitor } from 'stream';
+import { Console } from 'console';
+var uniqid = require('uniqid'); 
 @Component({
   selector: 'app-mis-turnos',
   templateUrl: './mis-turnos.component.html',
@@ -12,6 +14,7 @@ import { errorMonitor } from 'stream';
 export class MisTurnosComponent implements OnInit {
 
 
+  auxHistoriaClinica = new HistoriaClinica()
   auxCalificacion:number=0
   rechazarTurno:boolean=false
 
@@ -36,6 +39,16 @@ export class MisTurnosComponent implements OnInit {
   formaComentario:FormGroup;
   formaEncuesta:FormGroup;
   formaCalificacion:FormGroup
+  formaFinalizarTurno:FormGroup
+  formaHistorialClinico:FormGroup
+
+  forma1erAgregado:FormGroup
+  forma2erAgregado:FormGroup
+  forma3erAgregado:FormGroup
+  add1erDatoDinamico:boolean = false
+  add2doDatoDinamico:boolean = false
+  add3roDatoDinamico:boolean = false
+  cantCamposNews = 0
   
   constructor(private fb:FormBuilder,private apiFB:FirebaseService) {
     this.formaComentario = this.fb.group({
@@ -51,6 +64,29 @@ export class MisTurnosComponent implements OnInit {
     this.formaCalificacion = this.fb.group({
       'comentarioCalificacion':['',[Validators.required,]],
     })
+    this.formaFinalizarTurno = this.fb.group({
+      'comentario':['',[Validators.required,]],
+      'diagnostico':['',[Validators.required,]],
+    })
+    this.formaHistorialClinico = this.fb.group({
+      'altura':['',[Validators.required,]],
+      'peso':['',[Validators.required,]],
+      'temperatura':['',[Validators.required,]],
+      'presion':['',[Validators.required,]],
+    })
+    this.forma1erAgregado = this.fb.group({
+      'clave1':['',[Validators.required,]],
+      'valor1':['',[Validators.required,]],
+    })
+    this.forma2erAgregado = this.fb.group({
+      'clave2':['',[Validators.required,]],
+      'valor2':['',[Validators.required,]],
+    })
+    this.forma3erAgregado = this.fb.group({
+      'clave3':['',[Validators.required,]],
+      'valor3':['',[Validators.required,]],
+    })
+    
 
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
       if(res!=null){//EVENTO
@@ -137,10 +173,7 @@ export class MisTurnosComponent implements OnInit {
           newArrayPacientes.push(newUser)
         }
       }) 
-      console.log('newArray')
-    console.log(newArray)
-    console.log('newArrayPacientes')
-    console.log(newArrayPacientes)
+
     this.listaEspeciaistas=newArray
     this.listaPacientes=newArrayPacientes
   })
@@ -178,45 +211,41 @@ export class MisTurnosComponent implements OnInit {
     this.switchActivarFiltros =  !this.switchActivarFiltros 
    }
  
-   activarFiltroEspecialistas(){
-     if(!this.switchFiltroEspecialista){
-       this.switchFiltroEspecialidades=false
-       
-     }
-     this.switchFiltroEspecialista = !this.switchFiltroEspecialista
-    
-     
-     
-   }
-   activarFiltroPacientes(){
-    if(!this.switchFiltroPaciente){
-      this.switchFiltroEspecialidades=false
-      
+  activarFiltrosGenerico(filtro:string){
+    switch(filtro){
+      case 'Especialista':
+        if(!this.switchFiltroEspecialista){
+          this.switchFiltroEspecialidades=false       
+        }
+        this.switchFiltroEspecialista = !this.switchFiltroEspecialista       
+        break;
+      case 'Paciente':
+        if(!this.switchFiltroPaciente){
+          this.switchFiltroEspecialidades=false         
+        }
+        this.switchFiltroPaciente = !this.switchFiltroPaciente    
+        break;
+      case 'Especialidad':
+        if(!this.switchFiltroEspecialidades){
+          this.switchFiltroEspecialista=false
+        }
+        console.log(this.currenUser.perfil)
+        console.log(this.currenUser.especialidad)
+        if(this.currenUser.perfil=='Especialista'){
+         this.listaEspedialidades = this.currenUser.especialidad
+        }
+        this.switchFiltroEspecialidades = !this.switchFiltroEspecialidades
+        break;
     }
-    this.switchFiltroPaciente = !this.switchFiltroPaciente
-   
-    
-    
   }
-   activarFiltroEspecialidades(){
-     if(!this.switchFiltroEspecialidades){
-       this.switchFiltroEspecialista=false
-     }
-     console.log(this.currenUser.perfil)
-     console.log(this.currenUser.especialidad)
-     if(this.currenUser.perfil=='Especialista'){
-      this.listaEspedialidades = this.currenUser.especialidad
-     }
-     this.switchFiltroEspecialidades = !this.switchFiltroEspecialidades
-   }
  
-   eliminarFiltros(){
+  eliminarFiltros(){
      this.listaTurnos = this.listaAuxTurnos
      this.switchFiltroEspecialista=false
      this.switchFiltroEspecialidades=false
      this.filtroAplicado=false
  
-   }
+  }
  
    seleccionarTurnoParaComentario(turno:Turno){
     this.turnoSelectedForComentary = turno
@@ -252,14 +281,12 @@ export class MisTurnosComponent implements OnInit {
       })
     this.listaTurnos=listaFiltrada
   }
-
   filtrarTurnosxEspecialidad(especialidad:any){
     let listaFiltrada = this.listaAuxTurnos.filter(value=> {
       return value.especialidad.id == especialidad.id 
       })
     this.listaTurnos=listaFiltrada
   }
-
   aceptarTurno(turno:Turno){
     this.apiFB.updaterTurnoProperty(turno.id,{status:2})
     .then(rta=>{
@@ -270,7 +297,6 @@ export class MisTurnosComponent implements OnInit {
       console.log('ocurrio un error ACEPTANDO EL TURNO  ' + err)
     })
   }
-
   preCancelarTurno(turno:Turno,rechazado=0){
 
   console.log(turno)
@@ -282,7 +308,6 @@ export class MisTurnosComponent implements OnInit {
 
 
   }
-
   cancelarTurnoDefinitivo(){
     
     this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{comentario:this.formaComentario.value.comentario})
@@ -302,7 +327,6 @@ export class MisTurnosComponent implements OnInit {
       console.log('ocurrio un error editando EL COMENTARIO ' + err)
     })
   }
-
   realizarEncuesta(turno:Turno){
     console.log(turno)
     this.seleccionarTurnoParaComentario(turno)
@@ -334,6 +358,60 @@ export class MisTurnosComponent implements OnInit {
      .catch(err=>{
       console.log('error al enviar la Calificacion'+ err)
      })
+  }
+
+
+
+  finalizarTurno(){
+    console.log(this.formaFinalizarTurno.value)
+    this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{status:3,diagnostico:this.formaFinalizarTurno.value.diagnostico,comentario:this.formaFinalizarTurno.value.comentario})
+    .then(value=>{
+      console.log('turno finalizado con exito')
+    })
+    .catch(err=>{
+      console.log('ERROR FINALIZANDO EL TURNO'+err)
+    })
+  }
+
+  addCampoDinamico(){
+    if(!this.add1erDatoDinamico){
+      this.add1erDatoDinamico=true
+    }else if(this.add1erDatoDinamico &&  !this.add2doDatoDinamico ){
+      this.add2doDatoDinamico=true
+    }else if(this.add2doDatoDinamico && !this.add3roDatoDinamico ){
+      this.add3roDatoDinamico=true
+    }
+   
+  }
+
+
+  guardarHistorial(){
+    this.auxHistoriaClinica.turno = this.turnoSelectedForComentary
+    this.auxHistoriaClinica.id=uniqid()
+    this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura
+    this.auxHistoriaClinica.peso= this.formaHistorialClinico.value.peso
+    this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura 
+    this.auxHistoriaClinica.temperatura = this.formaHistorialClinico.value.temperatura
+    if(!this.forma1erAgregado.invalid){
+      let auxClave:string = `${this.forma1erAgregado.value.clave1}` 
+      let auxValor = this.forma1erAgregado.value.valor1
+      this.auxHistoriaClinica.anexos.push(`${auxClave}  -  ${auxValor}`)
+    }
+    if(!this.forma2erAgregado.invalid){
+      let auxClave2 = this.forma2erAgregado.value.clave2
+      let auxValor2 = this.forma2erAgregado.value.valor2
+      this.auxHistoriaClinica.anexos.push(`${auxClave2}  -  ${auxValor2}`)
+    }
+    if(!this.forma3erAgregado.invalid){
+      let auxClave3 = this.forma3erAgregado.value.clave3
+      let auxValor3 = this.forma3erAgregado.value.valor3
+      this.auxHistoriaClinica.anexos.push(`${auxClave3}  -  ${auxValor3}`)
+    }
+      
+    
+    console.log('HISTORIA A GUARDAR')
+    console.log(this.auxHistoriaClinica)
+
   }
 
   ngOnInit(): void {
