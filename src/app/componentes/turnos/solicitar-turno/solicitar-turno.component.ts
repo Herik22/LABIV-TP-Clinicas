@@ -65,6 +65,7 @@ export class SolicitarTurnoComponent implements OnInit {
           this.currenUser.uid = objRta?.['uid']
           this.currenUser.especialidad = objRta?.['especialidad']
           this.currenUser.password = objRta?.['password']
+          this.currenUser.historialClinico = objRta?.['historialClinico']
          })
       }else{
     
@@ -96,6 +97,7 @@ export class SolicitarTurnoComponent implements OnInit {
           newUser.obraSocial = value.obraSocial
           newUser.uid = value.uid
           newUser.perfil = value.perfil
+          newUser.historialClinico = value.historialClinico
           newArray.push(newUser)
         }
       })

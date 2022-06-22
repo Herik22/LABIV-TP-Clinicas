@@ -5,6 +5,7 @@ import { Usuario } from 'src/app/entidades/usuario';
 import { HistoriaClinica } from 'src/app/entidades/historiaClinica';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
 import { Console } from 'console';
+import { normalize } from 'path';
 var uniqid = require('uniqid'); 
 @Component({
   selector: 'app-mis-turnos',
@@ -29,6 +30,7 @@ export class MisTurnosComponent implements OnInit {
   listaPacientes:Usuario[]=[] //especialista
   nameCEspecialidades:string='especialidades'
   nameCollectionUsers:string='UsuariosColeccion'
+  nameCollectionHistoriaClinina:string='HistoriaClinicaColeccion'
 
   switchFiltroPaciente:boolean = false
   switchFiltroEspecialista:boolean = false
@@ -154,13 +156,12 @@ export class MisTurnosComponent implements OnInit {
     
       }
     }) 
-   
     this.apiFB.getCollection(this.nameCollectionUsers).subscribe(res=>{
        
       let newArray:Usuario[]=[]
       let newArrayPacientes:Usuario[]=[]
       res.forEach(value=>{
-        if(value.perfil==='Especialista'){
+        if(value.perfil==='Especialista'){ 
           const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
           newUser.especialidad = value.especialidad
           newUser.uid = value.uid
@@ -176,10 +177,10 @@ export class MisTurnosComponent implements OnInit {
 
     this.listaEspeciaistas=newArray
     this.listaPacientes=newArrayPacientes
-  })
-  this.apiFB.getCollection(this.nameCEspecialidades).subscribe(res=>{
-    this.listaEspedialidades= res
-  })
+    })
+    this.apiFB.getCollection(this.nameCEspecialidades).subscribe(res=>{
+      this.listaEspedialidades= res
+    })
 
    }
 
@@ -393,28 +394,47 @@ export class MisTurnosComponent implements OnInit {
     this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura 
     this.auxHistoriaClinica.temperatura = this.formaHistorialClinico.value.temperatura
     if(!this.forma1erAgregado.invalid){
-      let auxClave:string = `${this.forma1erAgregado.value.clave1}` 
-      let auxValor = this.forma1erAgregado.value.valor1
-      this.auxHistoriaClinica.anexos.push(`${auxClave}  -  ${auxValor}`)
+      let auxClave:string = this.forma1erAgregado.value.clave1  //
+      let auxValor = this.forma1erAgregado.value.valor1 
+      let objAux  = {clave:auxClave,valor:auxValor}
+      this.auxHistoriaClinica.anexos.push(objAux) 
     }
     if(!this.forma2erAgregado.invalid){
       let auxClave2 = this.forma2erAgregado.value.clave2
       let auxValor2 = this.forma2erAgregado.value.valor2
-      this.auxHistoriaClinica.anexos.push(`${auxClave2}  -  ${auxValor2}`)
+      let objAux  = {clave:auxClave2,valor:auxValor2}
+      this.auxHistoriaClinica.anexos.push(objAux)
     }
     if(!this.forma3erAgregado.invalid){
       let auxClave3 = this.forma3erAgregado.value.clave3
       let auxValor3 = this.forma3erAgregado.value.valor3
-      this.auxHistoriaClinica.anexos.push(`${auxClave3}  -  ${auxValor3}`)
+      let objAux  = {clave:auxClave3,valor:auxValor3} 
+      this.auxHistoriaClinica.anexos.push(objAux)
     }
-      
-    
-    console.log('HISTORIA A GUARDAR')
-    console.log(this.auxHistoriaClinica)
 
-  }
+    let arrayNuevo = this.turnoSelectedForComentary.paciente.historialClinico 
+    arrayNuevo.push(this.auxHistoriaClinica)
+
+    let pacienteActualizado = {historialClinico:[]} 
+    console.log(pacienteActualizado) 
+   this.apiFB.updaterUsuarioProperty(this.turnoSelectedForComentary.paciente.uid,pacienteActualizado)
+    .then(value=>{
+      alert('AGREGADO CON EXITO')
+      this.closeModalHistorialClinico()
+    })
+    .catch(err=>{
+      console.log('error guardando la historia clinica en el paciente.'+err)
+      this.closeModalHistorialClinico()
+    }) 
+
+ }
 
   ngOnInit(): void {
+  }
+  closeModalHistorialClinico(){
+    let modal =  (<HTMLInputElement> document.getElementById('exampleModal6'))   
+    modal.setAttribute('data-bs-dismiss','modal');
+  //.setAttribute('data-dismiss','modal');
   }
 
 }

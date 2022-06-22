@@ -1,3 +1,5 @@
+import { HistoriaClinica } from "./historiaClinica"
+
 export class Usuario  {
     uid:string | undefined=''
     nombre:string
@@ -12,6 +14,7 @@ export class Usuario  {
     perfil:string=''
     isAdmin:boolean
     valid=false
+    historialClinico:any[]=[]
 
     
     

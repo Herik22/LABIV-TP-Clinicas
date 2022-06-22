@@ -11,6 +11,8 @@ export class Turno {
     resenia:string=''
     status:number=0 //0-false  1-Pendiente 2-ACEPTADO  3-Realizado  4-Rechazado   6Cancelado 
     encuestaCompletada:boolean=false
+    historialGenerado:boolean=false
+    idHistorial:string=''
     calificacion:any=0
     encuesta:any=''
     id:string=''

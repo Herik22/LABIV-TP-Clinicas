@@ -98,6 +98,7 @@
         <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
         <td>
             <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
+            <button *ngIf="turno.status == 3 && turno.historialGenerado "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  > ✅ Historial Clinico generado ✅ </button> 
             <button *ngIf="turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)">Generar Historial Clinico </button>      
             <button *ngIf="turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      
             <button *ngIf="turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
@@ -448,8 +449,8 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar</button>
-        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="formaHistorialClinico.invalid"> Guardar Historial </button>
+        <button type="button" class="btn btn-secondary" (click)="closeModalHistorialClinico()"> Cancelar</button>
+        <button type="submit" class="btn btn-success"  [disabled]="formaHistorialClinico.invalid"> Guardar Historial </button>
       </div>
       </form>
    
