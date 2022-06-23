@@ -1,0 +1,110 @@
+<div class="text-center">
+    <h1 style="font-weight: bold;"> Mis Pacientes  Dr. {{currenUser.nombre}} {{currenUser.apellido}} </h1> <img [src]="currenUser.fotosPerfil[0]" alt="" width="100px" height="100px">
+</div>
+
+
+<div *ngIf="tienePaciente" >
+    
+  <!--<table  class="table" id="excel-table"  >
+        <thead>
+          <tr>
+            <th scope="col">Nombre:</th>
+            <th scope="col">Apellido:</th>
+            <th scope="col">Edad:</th>
+            <th scope="col">Dni:</th>
+            <th  scope="col">ObraSocial:</th>
+       
+          </tr>
+        </thead>
+        <tbody *ngFor="let usuario of listaMisPacientes" >
+          <tr>
+            <td>{{usuario?.nombre}}</td>
+            <td>{{usuario?.apellido}}</td>
+            <td>{{usuario?.edad}}</td>
+            <td>{{usuario?.dni}}</td>
+            <td>{{usuario.obraSocial}}</td>
+    
+          </tr>
+        </tbody>
+    </table>-->  
+    <hr>
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+          <div  *ngFor="let usuario of listaMisPacientes"  class="carousel-item active ">
+            <button class="btn" data-bs-toggle="modal" data-bs-target="#modalInfoExtra" (click)="clickearUsuario(usuario)">
+                <div class="card">
+                    <img [src]="usuario.fotosPerfil[0]" class="d-block w-50" alt="..." style="border-radius: 60px;align-self: center; margin-top: 10px;" width="150px" height="150px">
+                    <div class="card-body">
+                        <h5 class="card-title text-center"> {{usuario.nombre}} {{usuario.apellido}}    </h5>
+                    </div>
+                </div>
+            </button>
+           
+          </div>
+
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<div *ngIf="!tienePaciente" >
+    <p>
+        Ups parece que no tienes pacientes atendidos aun . 
+    </p>
+</div>
+
+<!-- Modal HISTORIAL CLINICO  -->
+<div class="modal fade" id="modalInfoExtra" tabindex="-1" aria-labelledby="modalInfoExtra" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h1> Turnos del Paciente:  {{pacienteSeleccionado.nombre}}   {{pacienteSeleccionado.apellido}} </h1>
+        </div>
+        <app-listado-turnos-paciente *ngIf="turnosPacienteClickeado.length>0" [listaTurnos]="turnosPacienteClickeado" (eventoTurnoSeleccionado)="escucharTurnoSelecionado($event)" > </app-listado-turnos-paciente>
+        <div  class="modal-footer">
+            
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cerrarModalyLimpiarData()" > Cerrar </button>      
+        </div>
+      </div>
+    </div>
+    
+</div>
+<!--SUB MODAL -->
+<div class="modal fade" id="modalComentarioTurno" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalToggleLabel2">Reseñas / Comentarios del turno ({{turnoSelected.id}}) </h5>
+          <button type="button" class="btn-close" data-bs-target="#modalInfoExtra" data-bs-toggle="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h3>Comentario:</h3>
+            <p>
+              {{turnoSelected.comentario}}
+            </p>
+            <h3>Reseña:</h3>
+            <p>
+              {{turnoSelected.resenia}}
+            </p>
+          </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-target="#modalInfoExtra" data-bs-toggle="modal" data-bs-dismiss="modal">Volver a los turnos</button>
+          
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+ 

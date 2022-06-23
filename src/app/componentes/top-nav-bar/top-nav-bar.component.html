@@ -14,6 +14,9 @@
           <li *ngIf="isLogged " class="nav-item">
             <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['usuarios/perfil']" >Perfil</a>
           </li>
+          <li *ngIf="isLogged && perfilUser=='Especialista' " class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['pacientes']" > Mis Pacientes</a>
+          </li>
 
           <li *ngIf="isLogged && isAdmin" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">Usuarios</a>
@@ -25,7 +28,7 @@
           <li *ngIf="isLogged" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">Turnos</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown03">
-              <li><a class="dropdown-item"  style="color: grey;"  (click)="goToTurnos('solicitarTurno')" > Solicitar Turno </a></li>
+              <li *ngIf="perfilUser == 'Paciente' || isAdmin " > <a class="dropdown-item"  style="color: grey;"  (click)="goToTurnos('solicitarTurno')" > Solicitar Turno </a></li>
               <li *ngIf="isAdmin" ><a class="dropdown-item"  style="color: grey;"  (click)="goToTurnos('turnosClinica')" > Turnos de la clinica </a></li>
               <li *ngIf="perfilUser == 'Paciente' || perfilUser == 'Especialista'  " ><a class="dropdown-item"  style="color: grey;" (click)="goToTurnos('misTurnos')">Mis Turnos </a></li>
             </ul>

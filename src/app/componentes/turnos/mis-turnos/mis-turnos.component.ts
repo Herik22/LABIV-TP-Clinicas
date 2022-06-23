@@ -36,6 +36,7 @@ export class MisTurnosComponent implements OnInit {
   switchFiltroEspecialista:boolean = false
   switchFiltroEspecialidades:boolean = false
   switchActivarFiltros:boolean = false
+  switchFiltroGenerico:boolean=false
   filtroAplicado:boolean = false
   turnoSelectedForComentary:Turno = new Turno()
   formaComentario:FormGroup;
@@ -51,6 +52,7 @@ export class MisTurnosComponent implements OnInit {
   add2doDatoDinamico:boolean = false
   add3roDatoDinamico:boolean = false
   cantCamposNews = 0
+  palabraBuscar:any
   
   constructor(private fb:FormBuilder,private apiFB:FirebaseService) {
     this.formaComentario = this.fb.group({
@@ -97,17 +99,24 @@ export class MisTurnosComponent implements OnInit {
     
           let objRta = resUSER.data()
       
+          this.currenUser.uid = objRta?.['uid']
           this.currenUser.nombre = objRta?.['nombre']
           this.currenUser.apellido = objRta?.['apellido']
-          this.currenUser.dni = objRta?.['dni']
           this.currenUser.edad = objRta?.['edad']
+          this.currenUser.dni = objRta?.['dni']
+          this.currenUser.obraSocial = objRta?.['obraSocial']
+          this.currenUser.especialidad = objRta?.['especialidad']
           this.currenUser.email = objRta?.['email']
           this.currenUser.fotosPerfil = objRta?.['fotosPerfil']
-          this.currenUser.isAdmin = objRta?.['isAdmin']
-          this.currenUser.obraSocial = objRta?.['obraSocial']
           this.currenUser.perfil = objRta?.['perfil']
-          this.currenUser.uid = objRta?.['uid']
-          this.currenUser.especialidad = objRta?.['especialidad']
+          this.currenUser.isAdmin = objRta?.['isAdmin']
+          this.currenUser.valid = objRta?.['valid']
+          this.currenUser.historialClinico = objRta?.['historialClinico']
+          this.currenUser.pacientesAtendidos = objRta?.['pacientesAtendidos']
+          
+          
+          
+          
 
           this.apiFB.getCollection(this.nameCollectionTurnos).subscribe(res=>{
        
@@ -132,6 +141,7 @@ export class MisTurnosComponent implements OnInit {
                 newTurno.calificacion=value.calificacion
                 newTurno.comentario=value.comentario
                 newTurno.resenia=value.resenia
+                newTurno.historialGenerado = value.historialGenerado
                 
 
                 if(this.currenUser.perfil === 'Especialista'){
@@ -156,6 +166,7 @@ export class MisTurnosComponent implements OnInit {
     
       }
     }) 
+    
     this.apiFB.getCollection(this.nameCollectionUsers).subscribe(res=>{
        
       let newArray:Usuario[]=[]
@@ -165,12 +176,15 @@ export class MisTurnosComponent implements OnInit {
           const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
           newUser.especialidad = value.especialidad
           newUser.uid = value.uid
+          newUser.pacientesAtendidos = value.pacientesAtendidos
           newArray.push(newUser)
         }else if(value.perfil==='Paciente'){
           const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
           newUser.obraSocial = value.obraSocial
           newUser.perfil= value.perfil
           newUser.uid = value.uid
+          newUser.historialClinico = value.historialClinico
+
           newArrayPacientes.push(newUser)
         }
       }) 
@@ -244,19 +258,19 @@ export class MisTurnosComponent implements OnInit {
      this.listaTurnos = this.listaAuxTurnos
      this.switchFiltroEspecialista=false
      this.switchFiltroEspecialidades=false
+     this.switchFiltroGenerico= false
      this.filtroAplicado=false
  
   }
  
-   seleccionarTurnoParaComentario(turno:Turno){
+  seleccionarTurnoParaComentario(turno:Turno){
     this.turnoSelectedForComentary = turno
   }
-
   seleccionarPacienteParaFiltrar(paciente:Usuario){
     this.filtrarTurnosxPaciente(paciente)
     this.filtroAplicado=true
     this.switchFiltroPaciente=false
- }
+  }
    seleccionarEspecialistaParaFiltrar(especialista:Usuario){
      this.filtrarTurnosxEspecialista(especialista)
      this.filtroAplicado=true
@@ -267,15 +281,12 @@ export class MisTurnosComponent implements OnInit {
      this.filtroAplicado=true
      this.switchFiltroEspecialidades=false
   }
-
-
   filtrarTurnosxPaciente(esp:Usuario){
     let listaFiltrada = this.listaAuxTurnos.filter(value=> {
       return value.paciente.uid == esp.uid 
       })
     this.listaTurnos=listaFiltrada
   }
-
   filtrarTurnosxEspecialista(esp:Usuario){
     let listaFiltrada = this.listaAuxTurnos.filter(value=> {
       return value.especialista.uid == esp.uid 
@@ -288,6 +299,49 @@ export class MisTurnosComponent implements OnInit {
       })
     this.listaTurnos=listaFiltrada
   }
+ 
+  filtrarxPalabra(event:any){
+    this.palabraBuscar = event.value
+    console.log(this.palabraBuscar)
+    let listaFiltrada:Turno[]=[] 
+
+    this.listaAuxTurnos.forEach(value=>{
+        if( value.comentario.includes(this.palabraBuscar)||
+        value.resenia.includes(this.palabraBuscar)||
+        //Filtros Pacientes
+        value.paciente.uid?.includes(this.palabraBuscar)||
+        value.paciente.nombre.includes(this.palabraBuscar)||
+        value.paciente.apellido.includes(this.palabraBuscar)||
+        value.paciente.edad.toString().includes(this.palabraBuscar)||
+        value.paciente.dni.toString().includes(this.palabraBuscar)||
+        value.paciente.obraSocial.includes(this.palabraBuscar)||
+        value.paciente.email.includes(this.palabraBuscar) ||
+        //FiltrosEspecialista
+         value.especialista.uid?.includes(this.palabraBuscar)||
+        value.especialista.nombre.includes(this.palabraBuscar)||
+        value.especialista.apellido.includes(this.palabraBuscar)||
+        value.especialista.edad.toString().includes(this.palabraBuscar)||
+        value.especialista.dni.toString().includes(this.palabraBuscar)||
+        value.especialista.obraSocial.includes(this.palabraBuscar)||
+        value.especialista.email.includes(this.palabraBuscar) ||
+        value.especialidad.especialidad.includes(this.palabraBuscar)||
+        value.fecha.toLocaleDateString().includes(this.palabraBuscar) ||
+        this.obtenerEstado(value.status).includes( this.palabraBuscar.toUpperCase())  ){
+          this.switchFiltroGenerico=true
+          this.filtroAplicado=true
+          listaFiltrada.push(value)
+        }
+    })
+
+    if(this.palabraBuscar==''){
+      this.filtroAplicado=false
+    }
+    if(listaFiltrada.length>0){
+      this.listaTurnos=listaFiltrada
+    }
+   
+  }
+
   aceptarTurno(turno:Turno){
     this.apiFB.updaterTurnoProperty(turno.id,{status:2})
     .then(rta=>{
@@ -360,20 +414,36 @@ export class MisTurnosComponent implements OnInit {
       console.log('error al enviar la Calificacion'+ err)
      })
   }
-
-
-
   finalizarTurno(){
-    console.log(this.formaFinalizarTurno.value)
+    let especialistaActual = this.listaEspeciaistas.find(value =>{return value.uid === this.turnoSelectedForComentary.especialista.uid})
+    let arrayPacientesAtendidosxEspecialista = especialistaActual?especialistaActual.pacientesAtendidos:[]
+
+ 
     this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{status:3,diagnostico:this.formaFinalizarTurno.value.diagnostico,comentario:this.formaFinalizarTurno.value.comentario})
     .then(value=>{
+      //agrego el paciente que recien tomo el turno al rray de pacientes del especialista encargaado del turno 
+      //si el paciente ya esta en el array no lo pusheo 
+      // si el paciente no esta LO PUSHEO
+      if(arrayPacientesAtendidosxEspecialista.includes(this.turnoSelectedForComentary.paciente.uid)){
+      }else{
+        arrayPacientesAtendidosxEspecialista.push(this.turnoSelectedForComentary.paciente.uid)
+        this.apiFB.updaterUsuarioProperty(this.turnoSelectedForComentary.especialista.uid,{pacientesAtendidos:arrayPacientesAtendidosxEspecialista})
+        .then(value=>{})
+        .catch(err=>{
+          console.log('ERROR  al actualizar el array de los pacientes atendidos X el ESPECIALISTA'+err)
+        })
+      }
+      
       console.log('turno finalizado con exito')
     })
     .catch(err=>{
       console.log('ERROR FINALIZANDO EL TURNO'+err)
-    })
-  }
+    }) 
+   
 
+
+
+  }
   addCampoDinamico(){
     if(!this.add1erDatoDinamico){
       this.add1erDatoDinamico=true
@@ -384,15 +454,15 @@ export class MisTurnosComponent implements OnInit {
     }
    
   }
-
-
   guardarHistorial(){
+
     this.auxHistoriaClinica.turno = this.turnoSelectedForComentary
     this.auxHistoriaClinica.id=uniqid()
     this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura
     this.auxHistoriaClinica.peso= this.formaHistorialClinico.value.peso
     this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura 
     this.auxHistoriaClinica.temperatura = this.formaHistorialClinico.value.temperatura
+    this.auxHistoriaClinica.presion = this.formaHistorialClinico.value.presion
     if(!this.forma1erAgregado.invalid){
       let auxClave:string = this.forma1erAgregado.value.clave1  //
       let auxValor = this.forma1erAgregado.value.valor1 
@@ -412,29 +482,41 @@ export class MisTurnosComponent implements OnInit {
       this.auxHistoriaClinica.anexos.push(objAux)
     }
 
-    let arrayNuevo = this.turnoSelectedForComentary.paciente.historialClinico 
-    arrayNuevo.push(this.auxHistoriaClinica)
+    let pacienteActual = this.listaPacientes.find(value =>{
+      return value.uid === this.turnoSelectedForComentary.paciente.uid
+    })
 
-    let pacienteActualizado = {historialClinico:[]} 
-    console.log(pacienteActualizado) 
-   this.apiFB.updaterUsuarioProperty(this.turnoSelectedForComentary.paciente.uid,pacienteActualizado)
+    let arrayNuevo = pacienteActual?.historialClinico // traer al usuario actualmente. 
+    
+    arrayNuevo?arrayNuevo.push(JSON.parse(JSON.stringify(this.auxHistoriaClinica))):null 
+
+    let pacienteActualizado = {historialClinico:arrayNuevo} 
+
+     this.apiFB.updaterUsuarioProperty(this.turnoSelectedForComentary.paciente.uid,pacienteActualizado)
     .then(value=>{
-      alert('AGREGADO CON EXITO')
-      this.closeModalHistorialClinico()
+      //actualizo el estado del turno
+      this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{historialGenerado:true})
+      .then(value=>{})
+      .catch(err=>{console.log('error actualizando el estado del historial del TURNO.'+err)})
     })
     .catch(err=>{
       console.log('error guardando la historia clinica en el paciente.'+err)
       this.closeModalHistorialClinico()
     }) 
+   
 
  }
-
   ngOnInit(): void {
   }
+  
+
+
+
   closeModalHistorialClinico(){
     let modal =  (<HTMLInputElement> document.getElementById('exampleModal6'))   
     modal.setAttribute('data-bs-dismiss','modal');
   //.setAttribute('data-dismiss','modal');
   }
+
 
 }

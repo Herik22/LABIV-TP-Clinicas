@@ -1,7 +1,5 @@
 <div class="container" >
     <main >
-
-  
       <div class="row g-5" style="flex-direction: row-reverse;">
         <div class="col-md-5 col-lg-4 order-md-last">
           <h4 class="d-flex justify-content-center align-items-center mb-3 text-center">
@@ -11,7 +9,10 @@
           <div *ngIf="auxUsuario.perfil==='Paciente'" class="text-center" style="flex-direction: column;">
             <img class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[0]"  >
             <img  class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[1]"  >
-            
+            <hr class="my-4">
+           
+            <button  type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalInfoExtra" > Ver Historiales Clínicos </button>
+
           </div>
           <div  *ngIf="auxUsuario.perfil!='Paciente'" class="text-center">
             <img class="img-account-profile rounded-circle mb-2" [src]="auxUsuario.fotosPerfil[0]"  >
@@ -122,5 +123,20 @@
         </div>
       </div>
     </main>
-
 </div>
+<!-- Modal HISTORIAL CLINICO  -->
+<div class="modal fade" id="modalInfoExtra" tabindex="-1" aria-labelledby="modalInfoExtra" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p> Historiales Clinicos  </p>
+      </div>
+      <app-listado-historiales-clinicos [idPaciente]="auxUsuario.uid" > </app-listado-historiales-clinicos>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cerrar </button>      
+      </div>
+    </div>
+  </div>
+</div>
+
+

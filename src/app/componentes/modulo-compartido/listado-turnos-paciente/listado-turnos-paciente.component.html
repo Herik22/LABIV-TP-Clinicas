@@ -1,0 +1,40 @@
+
+<!-- LISTADO DE TODOS LOS TURNOS -->
+<table *ngIf="listaTurnos.length>0" class="table" >
+    <thead>
+      <tr>
+        <th scope="col"> ID </th>
+        <th scope="col">fecha</th>   
+        <th scope="col">Paciente</th>
+        <th scope="col">Obra Social</th>
+        <th scope="col">Especialista</th>   
+        <th scope="col">Area (Especialidad)</th>   
+        <th scope="col">Acciones </th>
+
+      </tr>
+    </thead>
+    <tbody *ngFor="let turno of listaTurnos" >
+      <tr>
+        <td> {{turno.id}} </td>
+        <td>{{turno.fecha.toLocaleDateString()}}</td>
+        <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
+        <td>{{turno.paciente.obraSocial}}</td>
+        <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
+        <td> {{turno.especialidad.especialidad}} </td>
+       
+        <td>
+            <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
+
+            <button  class="btn btn-info" data-bs-target="#modalComentarioTurno" data-bs-toggle="modal" data-bs-dismiss="modal" (click)="emitirEvento(turno)"> Ver Reseña Turno </button>   
+          </td>
+        <td>
+         
+        </td>
+    
+      </tr>
+    </tbody>
+</table>
+
+<div *ngIf="listaTurnos.length<=0 " >
+    <h1>Ups, parece que no tienes turnos.</h1>
+</div>

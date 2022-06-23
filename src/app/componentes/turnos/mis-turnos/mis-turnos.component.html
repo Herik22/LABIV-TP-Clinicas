@@ -11,7 +11,7 @@
   <button *ngIf="currenUser.perfil != 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Especialista')" > Filtrar por Especialista 👨🏼‍🔬 </button>
   <button *ngIf="currenUser.perfil == 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Paciente')" > Filtrar por Paciente  👨🏼⛑ </button>
   <button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" (click)="activarFiltrosGenerico('Especialidad')">  Filtrar por Especialidad 🥼</button>
-  
+  <input type="text" class="form-control" id="firstNamep" placeholder="Filtrar X Palabra" value="" (input)="filtrarxPalabra($event.target)" >
   <button *ngIf="filtroAplicado" style="margin: 10px;color: white; " type="button" class="btn btn-danger" (click)="eliminarFiltros()"> ❌ Eliminar Filtros ❌ </button>
 </div>
 
@@ -98,12 +98,12 @@
         <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
         <td>
             <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
-            <button *ngIf="turno.status == 3 && turno.historialGenerado "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  > ✅ Historial Clinico generado ✅ </button> 
-            <button *ngIf="turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)">Generar Historial Clinico </button>      
-            <button *ngIf="turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      
-            <button *ngIf="turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
-            <button *ngIf="turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
-            <button *ngIf="turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
+    
+            <button *ngIf=" turno.historialGenerado==false  && currenUser.perfil==='Especialista' &&  turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)">Generar Historial Clinico </button>      
+            <button *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      
+            <button *ngIf="currenUser.perfil==='Especialista' &&  turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
+            <button *ngIf="  turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
+            <button *ngIf=" currenUser.perfil==='Especialista' && turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
             <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
             <button *ngIf="turno.status === 3 &&  turno.encuestaCompletada == false"  style="margin: 10px;color: black; " type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#exampleModal3" (click)="realizarEncuesta(turno)"  >  Realizar Encuesta  </button>
             <button *ngIf=" turno.encuestaCompletada"  style="margin: 10px;color: black; " type="button" class="btn btn-success"    >Encuesta realizada  </button>
@@ -450,7 +450,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeModalHistorialClinico()"> Cancelar</button>
-        <button type="submit" class="btn btn-success"  [disabled]="formaHistorialClinico.invalid"> Guardar Historial </button>
+        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="formaHistorialClinico.invalid"> Guardar Historial </button>
       </div>
       </form>
    

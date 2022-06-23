@@ -1,0 +1,56 @@
+
+<table *ngIf="tieneHistorial" class="table" >
+    <thead>
+      <tr>
+        <th scope="col"> ID </th>   
+        <th scope="col">Altura</th>
+        <th scope="col">Peso</th> 
+        <th scope="col">Temperatura</th>
+        <th scope="col">Presion</th>
+        <th scope="col">Anexos</th>
+        <th scope="col">Acciones</th>   
+
+
+      </tr>
+    </thead>
+    <tbody *ngFor="let historia of historialesClinicos" >
+      <tr>
+        <td> {{historia.id}} </td>
+        <td> {{historia.altura}}  </td>
+        <td>{{historia.peso}}  </td>
+        <td>{{historia.temperatura}}  </td>
+        <td>{{historia.presion}} </td>
+        <td>
+            <p *ngFor="let anexo of historia.anexos"> Tipo Anexo: {{anexo.clave}}  Dato:{{anexo.valor}} </p>
+        </td>
+        <td>
+      
+        </td>
+      </tr>
+    </tbody>
+</table>
+
+<!-- Modal HISTORIAL CLINICO  -->
+<div class="modal fade" id="modalInfoExtra" tabindex="-1" aria-labelledby="modalInfoExtra" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p> Historial Clinico (ID) </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cerrar </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="!tieneHistorial">
+  <div class="d-flex justify-content-center">
+    <img *ngIf="loading" src="../../../../assets/registro/loading.gif" alt="imagenSubida" class="gifCargando" width="150px" height="150px">
+  </div>
+  <p *ngIf="!loading"> No tienes historiales  clinicos aun </p>
+</div>
+

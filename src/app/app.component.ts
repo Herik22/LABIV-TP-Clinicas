@@ -38,6 +38,7 @@ export class AppComponent {
           this.currenUser.obraSocial = objRta?.['obraSocial']
           this.currenUser.perfil = objRta?.['perfil']
           this.currenUser.uid = objRta?.['uid']
+          this.currenUser.pacientesAtendidos = objRta?.['pacientesAtendidos']
 
 
          

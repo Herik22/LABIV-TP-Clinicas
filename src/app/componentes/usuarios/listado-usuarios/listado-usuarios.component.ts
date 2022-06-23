@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import * as XLSX from 'xlsx'; 
 var uniqid = require('uniqid'); 
@@ -14,10 +15,16 @@ export class ListadoUsuariosComponent implements OnInit {
 
   
   nameColectionUsuarios:string ='UsuariosColeccion'
+  usuarioSeleccionado:Usuario = new Usuario()
+
   constructor(private firebaseApi:FirebaseService,) {
     this.firebaseApi.getUsuariosColl().subscribe(data=>{
       data.forEach(value=>{
-        this.listaUsuarios.push({...value.data(),idCollection:value.id})
+       // console.log('value.data() LISTADO USUARIOS ')
+       //  console.log(value.data())
+      
+        this.listaUsuarios.push({...value.data()})
+       // this.listaUsuarios.push({...value.data(),idCollection:value.id})
       })
     })    
    }
@@ -35,8 +42,8 @@ export class ListadoUsuariosComponent implements OnInit {
     this.firebaseApi.getUsuariosColl().subscribe(data=>{
       data.forEach(value=>{
         
-        console.log({...value.data(),idCollection:value.id})
-        this.listaUsuarios.push({...value.data(),idCollection:value.id})
+       // console.log({...value.data(),idCollection:value.id})
+        this.listaUsuarios.push({...value.data()})
       })
     })    
   }
@@ -55,6 +62,15 @@ export class ListadoUsuariosComponent implements OnInit {
     XLSX.writeFile(wb, nameFile);
    
   }
+  seleccionarUsuario(usuario:Usuario){
+    this.usuarioSeleccionado= usuario
+  }
+
+  limpiarUsuarioSeleccionado(){
+
+    this.usuarioSeleccionado = new Usuario()
+  }
+  
   ngOnInit(): void {
   }
 

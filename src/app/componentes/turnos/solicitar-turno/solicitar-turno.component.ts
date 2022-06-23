@@ -106,7 +106,7 @@ export class SolicitarTurnoComponent implements OnInit {
     })
 
     this.apiFB.getCollection(this.nameCEspecialidades).subscribe(res=>{
-      this.listaEspedialidades= res
+      this.listaEspedialidades = res
     })
    }
 
@@ -119,6 +119,30 @@ export class SolicitarTurnoComponent implements OnInit {
     this.especialistaSelected=true
     this.especialistaSeleccionado= item
     
+  }
+  seleccionarEspecialista2(item:Usuario){
+    //this.listaEspedialidades = item.especialidad
+    this.especialistaSelected=true
+    this.especialistaSeleccionado= item
+    
+  }
+
+  seleccionarEspecialidad2(item:any){
+    this.isEspecialidadSelected=true
+    this.especialidadSeleccionada=true
+    
+    let listaAuxEspecialistas:Usuario[]=[]
+    this.listaEspeciaistas.forEach(value=>{
+      
+      value.especialidad.forEach(especialidadEspcialista=>{
+        if(especialidadEspcialista.id === item.id){
+          listaAuxEspecialistas.push(value)
+        }
+      })
+      
+    })
+    this.listaEspeciaistas = listaAuxEspecialistas
+
   }
 
   seleccionarEspecialidad(item:any){
@@ -145,6 +169,7 @@ export class SolicitarTurnoComponent implements OnInit {
 
    
   }
+
   seleccionarFechaTurno(dia:Date){
     console.log('FECHA SELECCIONADA')
     console.log(dia)

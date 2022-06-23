@@ -10,6 +10,9 @@ import { RegistroComponent } from './componentes/registro/registro.component';
 import { environment } from 'src/environments/environment.prod';
 import {AngularFireModule} from '@angular/fire/compat';
 import { ModuloCompartidoModule } from './componentes/modulo-compartido/modulo-compartido.module';
+import { PacientesComponent } from './componentes/pacientes/pacientes.component';
+import { TransformarFechaPipe } from './PIPES/transformar-fecha.pipe';
+import { DestacarDirective } from './DIRECTIVAS/destacar.directive';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,10 @@ import { ModuloCompartidoModule } from './componentes/modulo-compartido/modulo-c
     BienvenidaComponent,
     TopNavBarComponent,
     LoginComponent,
-    RegistroComponent
+    RegistroComponent,
+    PacientesComponent,
+    TransformarFechaPipe,
+    DestacarDirective
   ],
   imports: [
     BrowserModule,

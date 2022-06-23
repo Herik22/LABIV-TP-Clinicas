@@ -12,7 +12,8 @@
         <th  scope="col">Especialidad:</th>
         <th scope="col">Email:</th>
         <th scope="col">Perfil:</th>
-        <th scope="col">Validacion @ :</th>       
+        <th scope="col">Validacion @ :</th>   
+        <th scope="col">Acciones:</th>           
       </tr>
     </thead>
     <tbody *ngFor="let usuario of listaUsuarios" >
@@ -29,10 +30,31 @@
         </td>
         <td>{{usuario?.email}}</td>
         <td>{{usuario?.perfil != undefined?usuario?.perfil:usuario.isAdmin?'Administrador':'Sin perfil'}}</td>
-        <td *ngIf="usuario.perfil == 'Especialista' && !usuario.valid" > <button type="button" class="btn btn-success" (click)="updateValidate(usuario.idCollection)" > Validar </button> </td>
+        <td *ngIf="usuario.perfil == 'Especialista' && !usuario.valid" > <button type="button" class="btn btn-success" (click)="updateValidate(usuario.uid)" > Validar </button> </td>
         <td *ngIf="usuario.perfil == 'Especialista' && usuario.valid" style="color: green;" > Validado ✅ </td>
         <td *ngIf="usuario.isAdmin" style="color: green;" > Administrador </td>
         <td *ngIf="usuario.perfil == 'Paciente' " style="color: green;" > No aplica  </td>
+        <td *ngIf="usuario.perfil == 'Paciente' "> <button  type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalInfoExtra" (click)="seleccionarUsuario(usuario)" > Ver Historiales Clínicos </button> <!-- data-bs-toggle="modal" data-bs-target="#modalInfoExtra"   -->
+        </td>
       </tr>
     </tbody>
 </table>
+
+<!-- Modal HISTORIAL CLINICO  -->
+<div class="modal fade" id="modalInfoExtra" tabindex="-1" aria-labelledby="modalInfoExtra" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="text-center">
+          <h1> Historiales Clinicos de {{usuarioSeleccionado.nombre}} {{usuarioSeleccionado.apellido}}  </h1>
+        </div>
+        
+      </div>
+    
+      <app-listado-historiales-clinicos *ngIf="usuarioSeleccionado.uid" [idPaciente]="usuarioSeleccionado.uid" > </app-listado-historiales-clinicos>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="limpiarUsuarioSeleccionado()" > Cerrar </button>      
+      </div>
+    </div>
+  </div>
+</div>

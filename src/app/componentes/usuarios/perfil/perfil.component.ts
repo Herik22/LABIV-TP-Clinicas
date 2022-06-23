@@ -16,6 +16,7 @@ export class PerfilComponent implements OnInit {
   diasSemana:any[]=[{id:1,name:'Lunes'},{id:2,name:'Martes'},{id:3,name:'Miercoles'},{id:4,name:'Jueves'},{id:5,name:'Viernes'},{id:6,name:'Sabados'}]
   diasSeleccionados:number[]=[]
 
+
   constructor(private apiFB:FirebaseService) { 
 
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
@@ -136,6 +137,7 @@ export class PerfilComponent implements OnInit {
     console.log(this.diasSeleccionados)
  
   }
+
   ngOnInit(): void {
   }
 

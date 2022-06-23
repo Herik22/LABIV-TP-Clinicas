@@ -15,6 +15,7 @@ export class Usuario  {
     isAdmin:boolean
     valid=false
     historialClinico:any[]=[]
+    pacientesAtendidos:any[]=[]
 
     
     
