@@ -11,8 +11,12 @@ import { environment } from 'src/environments/environment.prod';
 import {AngularFireModule} from '@angular/fire/compat';
 import { ModuloCompartidoModule } from './componentes/modulo-compartido/modulo-compartido.module';
 import { PacientesComponent } from './componentes/pacientes/pacientes.component';
-import { TransformarFechaPipe } from './PIPES/transformar-fecha.pipe';
+
 import { DestacarDirective } from './DIRECTIVAS/destacar.directive';
+
+
+
+
 
 @NgModule({
   declarations: [
@@ -22,8 +26,9 @@ import { DestacarDirective } from './DIRECTIVAS/destacar.directive';
     LoginComponent,
     RegistroComponent,
     PacientesComponent,
-    TransformarFechaPipe,
-    DestacarDirective
+    DestacarDirective,
+
+
   ],
   imports: [
     BrowserModule,

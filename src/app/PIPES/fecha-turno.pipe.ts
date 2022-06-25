@@ -1,16 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'transformarFecha'
+  name: 'fechaTurno'
 })
-export class TransformarFechaPipe implements PipeTransform {
+export class FechaTurnoPipe implements PipeTransform {
 
   transform(value: Date,): string {
 
-    let dia = value.getDate()
-
     let month = '' // 0 enero.
-
+     
     switch(value.getMonth()){
       case 0:
         month = 'Enero'
@@ -51,8 +49,7 @@ export class TransformarFechaPipe implements PipeTransform {
 
     }
 
-
-    return `${dia} de ${month}` ;
+    return `${value.getDate()} de ${month} del ${value.getFullYear()} `;
   }
 
 }

@@ -90,12 +90,12 @@
     <tbody *ngFor="let turno of listaTurnos" >
       <tr>
         <td> {{turno.id}} </td>
-        <td>{{turno.fecha.toLocaleDateString()}}</td>
+        <td>{{turno.fecha | fechaTurno}}</td>
         <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
         <td>{{turno.paciente.obraSocial}}</td>
         <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
         <td> {{turno.especialidad.especialidad}} </td>
-        <td style="font-weight: bold;"> {{obtenerEstado(turno.status)}} </td>
+        <td style="font-weight: bold;"> {{turno.status | transformarEstado }} </td>
         <td>
             <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
     

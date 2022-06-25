@@ -123,9 +123,9 @@
     </div>
 
       <div  *ngIf="tieneDiasDisponibles" >
-        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_.toDateString()|date:'dd \'de\' LLLL \'\''}} </button>
+        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_ | transformarFecha }} </button>
 
-        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora|date:'shortTime'}}</button>
+        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora | date:'shortTime'}}</button>
   
       </div>
       <div *ngIf="!tieneDiasDisponibles">
