@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {
   IBarChartOptions,
   IChartistAnimationOptions,
-  IChartistData
+  IChartistData,
+  IPieChartOptions
 } from 'chartist';
 import { ChartEvent, ChartType } from 'ng-chartist';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
@@ -25,6 +26,8 @@ import { Usuario } from 'src/app/entidades/usuario';
 
 export class EstadisticasComponent implements OnInit {
   type:ChartType ='Bar'
+  type2:ChartType ='Pie'
+
   data:IChartistData={
     labels: [
       'Jan',
@@ -52,12 +55,16 @@ export class EstadisticasComponent implements OnInit {
     series:[]
   }
 
-
   options: IBarChartOptions = {
     axisX: {
       showGrid: false
     },
     height: 300
+  };
+  options2: IPieChartOptions = {
+    width:'22rem',
+    height: '22rem',
+    chartPadding: 15
   };
 
   events: ChartEvent = {
@@ -341,7 +348,7 @@ export class EstadisticasComponent implements OnInit {
 
     this.dataTurnosSolicitadosxEspecialistaxRangoFecha.labels= auxLabelsGraficoTurnoSolicitados
     let auxSerie = [auxValuesGraficoTurnoSolicitados]
-    this.dataTurnosSolicitadosxEspecialistaxRangoFecha.series=auxSerie
+    this.dataTurnosSolicitadosxEspecialistaxRangoFecha.series=auxValuesGraficoTurnoSolicitados//auxSerie
 
     this.datosListosTurnosSolicitados=true
 
