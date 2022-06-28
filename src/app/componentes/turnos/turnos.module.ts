@@ -9,6 +9,10 @@ import { TransformarFechaPipe } from 'src/app/PIPES/transformar-fecha.pipe';
 import { FechaTurnoPipe } from 'src/app/PIPES/fecha-turno.pipe';
 import { FormatoHoraPipe } from 'src/app/PIPES/formato-hora.pipe';
 import { TransformarEstadoPipe } from 'src/app/PIPES/transformar-estado.pipe';
+import { DestacarDirective } from 'src/app/DIRECTIVAS/destacar.directive';
+import { ChangeTittleFiltroDirective } from 'src/app/DIRECTIVAS/change-tittle-filtro.directive';
+import { DestacarBtnDirective } from 'src/app/DIRECTIVAS/destacar-btn.directive';
+
 
 @NgModule({
   declarations: [
@@ -18,7 +22,11 @@ import { TransformarEstadoPipe } from 'src/app/PIPES/transformar-estado.pipe';
     TransformarFechaPipe,
     FechaTurnoPipe,
     FormatoHoraPipe,
-    TransformarEstadoPipe
+    TransformarEstadoPipe,
+    DestacarDirective,
+    ChangeTittleFiltroDirective,
+    DestacarBtnDirective
+
   ],
   imports: [
     CommonModule,

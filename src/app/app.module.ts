@@ -11,10 +11,9 @@ import { environment } from 'src/environments/environment.prod';
 import {AngularFireModule} from '@angular/fire/compat';
 import { ModuloCompartidoModule } from './componentes/modulo-compartido/modulo-compartido.module';
 import { PacientesComponent } from './componentes/pacientes/pacientes.component';
+import { EstadisticasComponent } from './componentes/estadisticas/estadisticas.component';
 
-import { DestacarDirective } from './DIRECTIVAS/destacar.directive';
-
-
+import { ChartistModule } from "ng-chartist";
 
 
 
@@ -26,15 +25,14 @@ import { DestacarDirective } from './DIRECTIVAS/destacar.directive';
     LoginComponent,
     RegistroComponent,
     PacientesComponent,
-    DestacarDirective,
-
-
+    EstadisticasComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,FormsModule,ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    ModuloCompartidoModule
+    ModuloCompartidoModule,
+    ChartistModule
   ],
   providers: [],
   bootstrap: [AppComponent]

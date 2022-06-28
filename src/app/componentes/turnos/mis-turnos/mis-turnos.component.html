@@ -3,14 +3,14 @@
   <h1> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
 </div>
 
-<button class="btn btn-light" (click)="activarFiltrosUnicos()">
-  <h3>{{switchActivarFiltros?'FILTRAR ⬆️':'FILTRAR ⬇️'}}  </h3>
+<button class="btn btn-light" (click)="activarFiltrosUnicos()" appChangeTittleFiltro>
+  <h3>FILTRAR ⬇️ ⬇️</h3>
 </button>
 
 <div *ngIf="switchActivarFiltros">
-  <button *ngIf="currenUser.perfil != 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Especialista')" > Filtrar por Especialista 👨🏼‍🔬 </button>
-  <button *ngIf="currenUser.perfil == 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Paciente')" > Filtrar por Paciente  👨🏼⛑ </button>
-  <button  style="margin: 10px;color: white; " type="button" class=" btn btn-dark" (click)="activarFiltrosGenerico('Especialidad')">  Filtrar por Especialidad 🥼</button>
+  <button appDestacarBtn *ngIf="currenUser.perfil != 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Especialista') " > Filtrar por Especialista 👨🏼‍🔬 </button>
+  <button appDestacarBtn *ngIf="currenUser.perfil == 'Especialista' "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarFiltrosGenerico('Paciente')" > Filtrar por Paciente  👨🏼⛑ </button>
+  <button appDestacarBtn style="margin: 10px;color: white;" type="button" class=" btn btn-dark" (click)="activarFiltrosGenerico('Especialidad')">  Filtrar por Especialidad 🥼</button>
   <input type="text" class="form-control" id="firstNamep" placeholder="Filtrar X Palabra" value="" (input)="filtrarxPalabra($event.target)" >
   <button *ngIf="filtroAplicado" style="margin: 10px;color: white; " type="button" class="btn btn-danger" (click)="eliminarFiltros()"> ❌ Eliminar Filtros ❌ </button>
 </div>
@@ -94,8 +94,8 @@
         <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
         <td>{{turno.paciente.obraSocial}}</td>
         <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
-        <td> {{turno.especialidad.especialidad}} </td>
-        <td style="font-weight: bold;"> {{turno.status | transformarEstado }} </td>
+        <td > {{turno.especialidad.especialidad}} </td>
+        <td style="font-weight: bold;" appDestacar> {{turno.status | transformarEstado }} </td>
         <td>
             <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
     
