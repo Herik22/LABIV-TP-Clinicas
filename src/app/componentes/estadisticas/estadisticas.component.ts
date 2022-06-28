@@ -47,6 +47,10 @@ export class EstadisticasComponent implements OnInit {
     labels: [],
     series:[]
   }
+  dataTurnosSolicitadosxEspecialistaxRangoFecha:IChartistData={
+    labels: [],
+    series:[]
+  }
 
 
   options: IBarChartOptions = {
@@ -84,6 +88,7 @@ export class EstadisticasComponent implements OnInit {
 
   datosListosTurnosxEspecialidades:boolean = false
   datosListosTurnosxDias:boolean = false
+  datosListosTurnosSolicitados:boolean=false
 
   fechaInicio:Date = new Date('06/28/2022')
   fechaFinal:Date = new Date('07/22/2022')
@@ -325,7 +330,25 @@ export class EstadisticasComponent implements OnInit {
 
     console.log('DIAS DE LOS TURNOS UNICOS CON CANTIDADES ACTUALIZADAS DEL ESPECIALISTA ' + idEspecialista)
     console.log(diasTurnosUnicos) 
+
+    let auxLabelsGraficoTurnoSolicitados:any[]=[]
+    let auxValuesGraficoTurnoSolicitados:number[]=[]
+
+    diasTurnosUnicos.forEach(value=>{
+      auxLabelsGraficoTurnoSolicitados.push(value.fecha)
+      auxValuesGraficoTurnoSolicitados.push(value.cantidad)
+    })
+
+    this.dataTurnosSolicitadosxEspecialistaxRangoFecha.labels= auxLabelsGraficoTurnoSolicitados
+    let auxSerie = [auxValuesGraficoTurnoSolicitados]
+    this.dataTurnosSolicitadosxEspecialistaxRangoFecha.series=auxSerie
+
+    this.datosListosTurnosSolicitados=true
+
   }
+
+
+
   activarClasificarTurnosxDiaxEspecialista(){
     this.showEspecialistas = !this.showEspecialistas
   }

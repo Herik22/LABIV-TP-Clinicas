@@ -41,3 +41,8 @@
     <h2> Turnos por Días </h2>
     <x-chartist  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist>
 </div>
+
+<div *ngIf="datosListosTurnosSolicitados">
+    <h2> Turnos Solicitados X Especialista en Rango de fecha </h2>
+    <x-chartist  [type]="type" [data]="dataTurnosSolicitadosxEspecialistaxRangoFecha" [options]="options" > </x-chartist>
+</div>
