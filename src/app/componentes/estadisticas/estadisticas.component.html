@@ -1,2 +1,14 @@
 <h1>   ESTADÍSTICAS   </h1>
-<x-chartist [type]="type" [data]="data" [options]="options" > </x-chartist>
+
+<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnoxEspecialidad() " > Generar datos Grafico de barras (TURNOS X ESPECIALIDAD )</button>
+<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnosxDia() " > Generar datos Grafico de barras (TURNOS X DÍA )</button>
+
+<div *ngIf="datosListosTurnosxEspecialidades">
+    <h2> Turnos por Especialidad </h2>
+    <x-chartist  [type]="type" [data]="data" [options]="options" > </x-chartist>
+</div>
+
+<div *ngIf="datosListosTurnosxDias">
+    <h2> Turnos por Días </h2>
+    <x-chartist  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist>
+</div>

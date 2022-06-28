@@ -32,8 +32,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/chartist/dist/chartist.css",
-            "src/style.scss"
+              "node_modules/chartist/dist/chartist.css"
+
             ],
             "scripts": []
           },
