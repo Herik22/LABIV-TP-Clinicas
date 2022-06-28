@@ -7,6 +7,7 @@ import {
 import { ChartEvent, ChartType } from 'ng-chartist';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Turno } from 'src/app/entidades/turnos';
+import { Usuario } from 'src/app/entidades/usuario';
 
 @Component({
   selector: 'app-estadisticas',
@@ -75,7 +76,7 @@ export class EstadisticasComponent implements OnInit {
   nameCollectionTurnos:string='TurnosColeccion'
   listaTurnos:Turno[]=[]
   listaEspecialidades:any[]=[] //especialidades
-
+  listaEspecialistas:Usuario[]=[]
 
 
   turnosCargados:boolean = false
@@ -84,6 +85,10 @@ export class EstadisticasComponent implements OnInit {
   datosListosTurnosxEspecialidades:boolean = false
   datosListosTurnosxDias:boolean = false
 
+  fechaInicio:Date = new Date('06/28/2022')
+  fechaFinal:Date = new Date('07/22/2022')
+
+  showEspecialistas:boolean=false
 
   constructor(private apiFB:FirebaseService) {
     this.apiFB.getCollection(this.nameCollectionTurnos).subscribe(res=>{
@@ -134,6 +139,23 @@ export class EstadisticasComponent implements OnInit {
       this.especialidadesCargadas=true
       
     })
+    this.apiFB.getCollection(this.nameCollectionUsers).subscribe(res=>{
+       
+      let newArray:Usuario[]=[]
+
+      res.forEach(value=>{
+        if(value.perfil==='Especialista'){ 
+          const newUser = new Usuario(value.nombre,value.apellido,value.edad,value.dni,value.email,value.password,value.fotosPerfil,value.isAdmin)
+          newUser.especialidad = value.especialidad
+          newUser.uid = value.uid
+          newUser.pacientesAtendidos = value.pacientesAtendidos
+          newArray.push(newUser)
+        }
+      }) 
+
+    this.listaEspecialistas=newArray
+
+    })
 
    }
 
@@ -146,7 +168,21 @@ export class EstadisticasComponent implements OnInit {
 
 
   
+  mergeListaDias(lista:any[]){
+    let listaMerge :any[]=[]
 
+    lista.forEach(value=>{
+      let auxDiaString = value.fecha.toLocaleDateString()
+
+      if(!listaMerge.includes(auxDiaString)){
+        listaMerge.push(auxDiaString)
+      }
+      
+    })
+
+
+    return listaMerge
+  }
 
   clasificarTurnoxEspecialidad(){
 
@@ -200,6 +236,7 @@ export class EstadisticasComponent implements OnInit {
       }
       
     })
+
     console.log('DIAS DE LOS TURNOS UNICOS ')
     console.log(diasTurnosUnicos)
 
@@ -240,5 +277,56 @@ export class EstadisticasComponent implements OnInit {
     this.datosListosTurnosxDias=true
 
   }
+  clasificarTurnosxDiaxEspecialista(idEspecialista:string | undefined){
 
+    //TURNOS FILTRADOS POR ESPECIALISTA 
+    let auxTurnosFiltradosxEspecialista = this.listaTurnos.filter(value=>{
+      return value.especialista.uid===idEspecialista
+    })
+
+    console.log('TURNOS FILTRADOS POR ESPECIALISTA ' + idEspecialista )
+    console.log(auxTurnosFiltradosxEspecialista)
+
+     //TURNOS FILTRADOS POR ESPECIALISTA Y DENTRO DEL RANGO ESTABLECIDO
+     let auxTurnosFiltradosxEspecialistayFechas = auxTurnosFiltradosxEspecialista.filter(turno=>{
+      let auxFechaTurnoActual = new Date(turno.fecha)
+      return auxFechaTurnoActual>= this.fechaInicio && auxFechaTurnoActual<= this.fechaFinal
+    })
+
+
+    //obtengo la lista de los dias segun los turnos filtrados por ESPECIALISTA Y POR EL RANGO DE FECHA
+    let listaDiasTurnos = auxTurnosFiltradosxEspecialistayFechas.map(value=>{
+      let auxDate = new Date(value.fecha)
+      return {fecha:auxDate} 
+    })
+    //lista de los dias en los que se realiza turno SIN REPETIR DÍA
+    let diasTurnosUnicos:any[] = this.mergeListaDias(listaDiasTurnos)
+
+    //Mapeo la lista para agregarles cantidad.
+    diasTurnosUnicos=diasTurnosUnicos.map(value=>{
+      return {fecha:value,cantidad:0}
+    })
+
+   
+    //recorro los turnos buscando las fechas dentro del rango 
+    auxTurnosFiltradosxEspecialistayFechas.forEach(turno=>{
+      let auxFechaTurnoActual = new Date(turno.fecha)
+      diasTurnosUnicos.forEach((diaConCant)=>{
+        if(auxFechaTurnoActual>= this.fechaInicio && auxFechaTurnoActual<=this.fechaFinal){
+          if(diaConCant.fecha === auxFechaTurnoActual.toLocaleDateString()){
+            diaConCant.cantidad ++
+          }
+          //console.log(`la fecha ${auxFechaTurnoActual.toLocaleDateString()} esta dentro del rango ${this.fechaInicio.toLocaleDateString()} - ${this.fechaFinal.toLocaleDateString()}`)
+        }else{
+          console.log(`la fecha ${auxFechaTurnoActual.toLocaleDateString()} NO ESTA DENTRO DEL RANGO ${this.fechaInicio.toLocaleDateString()} - ${this.fechaFinal.toLocaleDateString()}`)
+        }        
+      })
+    })
+
+    console.log('DIAS DE LOS TURNOS UNICOS CON CANTIDADES ACTUALIZADAS DEL ESPECIALISTA ' + idEspecialista)
+    console.log(diasTurnosUnicos) 
+  }
+  activarClasificarTurnosxDiaxEspecialista(){
+    this.showEspecialistas = !this.showEspecialistas
+  }
 }

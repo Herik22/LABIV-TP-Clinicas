@@ -2,6 +2,35 @@
 
 <button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnoxEspecialidad() " > Generar datos Grafico de barras (TURNOS X ESPECIALIDAD )</button>
 <button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnosxDia() " > Generar datos Grafico de barras (TURNOS X DÍA )</button>
+<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarClasificarTurnosxDiaxEspecialista() " > Generar datos Grafico de barras (TURNOS X DÍA x ESPECIALISTA )</button>
+<div *ngIf="showEspecialistas">
+    <table  class="table"  >
+        <thead>
+          <tr>
+            <th scope="col">Nombre:</th>
+            <th scope="col">Apellido:</th>
+            <th></th>
+            <th  scope="col"> Acción </th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let especialista of listaEspecialistas" >
+          <tr>
+            <td>{{especialista?.nombre}}</td>
+            <td>{{especialista?.apellido}}</td>
+            <td> <img [src]="especialista?.fotosPerfil" alt="" width="100px" height="100px"> </td>
+            <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="clasificarTurnosxDiaxEspecialista(especialista?.uid) " > Elegir Especialista </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+
+
+<p>Fecha Inicio</p>
+<p> {{fechaInicio.toLocaleDateString()}}  mes/dia/año</p>
+
+<p>Fecha Final</p>
+<p> {{fechaFinal.toLocaleDateString()}} </p>
 
 <div *ngIf="datosListosTurnosxEspecialidades">
     <h2> Turnos por Especialidad </h2>
