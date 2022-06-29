@@ -43,6 +43,7 @@ export class FirebaseService {
       throw error
     }
   }
+
   async register(email:string,password:string){
     try {
       return await this.afauth.createUserWithEmailAndPassword(email,password)
@@ -51,16 +52,20 @@ export class FirebaseService {
       throw error
     }
   }
+
   getUserLogged(){
     return this.afauth.authState
   }
+
   getCurrentUser()
   {
     return this.afauth.authState;
   }
+
   logOut(){
     this.afauth.signOut()
   }
+
   async subirImages (nombreAlbum:string,nombre:string,imgB64:any){
     try {
       let rta = await this.storageRef.child(`${nombreAlbum}/${nombre}`).putString(imgB64,'data_url') // name carpeta/Nombre imagen 
@@ -72,6 +77,7 @@ export class FirebaseService {
       return null
     }
   }
+
   addDataCollection(nameColection:string,data:any){
     let response = {status:true,error:''}
     let collection = this.fireStore.collection<any>(nameColection)
@@ -88,6 +94,7 @@ export class FirebaseService {
     }
     return response
   }
+
   addDocumentoaColeccion(nameColection:string,nameDocument:string,data:any){
     let response = {status:true,error:''}
     let collection = this.fireStore.collection<any>(nameColection)
@@ -110,14 +117,17 @@ export class FirebaseService {
     let collection = this.fireStore.collection<any>(nameColection)
     return collection.valueChanges()
   }
+
   autorizarUsuario(idEspecialista:string,): Promise<any> {
     return this.usuariosRef.doc(idEspecialista).update({
       valid:true ,
     });
   }
+
   updateDuracion(idEspecialista:string|undefined,objActualizado:any): Promise<any> {
     return this.usuariosRef.doc(idEspecialista).update(objActualizado);
   }
+
   updaterUsuarioProperty(idUsuario:string|undefined,objConCambio:any): Promise<any> {
     return this.usuariosRef.doc(idUsuario).update(objConCambio);
    // return this.turnosRef.doc(idTurno).update(objActualizado);
@@ -136,6 +146,21 @@ export class FirebaseService {
   getUser(id:string|undefined){ 
       return this.usuariosRef.doc(id).get()
   }
+  verificarEmail(coleccion:any,id:string)
+  {
+    this.fireStore.collection(coleccion).doc(id).update({emailVerificado: true});
+  }
+  enviarEmail ()
+  {
+     return this.afauth.currentUser.then((u:any) => u.sendEmailVerification())
+    .then(() => {
+      console.log("email sent, should log out")
+      // this.ruteo.navigateByUrl('verifyEmail');
+      //TODO: PANTALLA VERIFY EMAIL
+    })
+      
+  }
+
 
 }
 

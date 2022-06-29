@@ -1,48 +1,196 @@
-<h1>   ESTADÍSTICAS   </h1>
 
-<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnoxEspecialidad() " > Generar datos Grafico de barras (TURNOS X ESPECIALIDAD )</button>
-<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="clasificarTurnosxDia() " > Generar datos Grafico de barras (TURNOS X DÍA )</button>
-<button appDestacarBtn *ngIf="turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="activarClasificarTurnosxDiaxEspecialista() " > Generar datos Grafico de barras (TURNOS X DÍA x ESPECIALISTA )</button>
-<div *ngIf="showEspecialistas">
+<main @transicionUp-Down>
+  <div class="text-center">
+    <h1>   ESTADÍSTICAS   </h1>
+  </div>
+  
+  <button @transicionDer-Izq  *ngIf="logsCargados && turnosCargados && especialidadesCargadas && !datosListosTurnosxEspecialidades"  style="margin: 10px;color: white; " type="button" class="btn btn-success" (click)="generarPrimerasGraficas() " > Generar Gráficas  (TURNOS X ESPECIALIDAD  &&  TURNOS X DÍA )</button>
+  
+  
+  <button @transicionDer-Izq *ngIf="turnosCargados && especialidadesCargadas "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="mostrarFechas() " > Generar datos Grafico  (TURNOS SOLICITADOS X DÍA x ESPECIALISTA )</button>
+  <button @transicionDer-Izq  *ngIf="turnosCargados && especialidadesCargadas "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="mostrarFechas(true) " > Generar datos Grafico  (TURNOS FINALIZADOS X DÍA x ESPECIALISTA )</button>
+  
+  <div *ngIf="showEspecialistas">
+      <div class="text-center">
+          <h2>Turnos Solicitados: Especialistas </h2>
+      </div>
+      <table  class="table"  >
+          <thead>
+            <tr>
+              <th scope="col">Nombre:</th>
+              <th scope="col">Apellido:</th>
+              <th></th>
+              <th  scope="col"> Acción </th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let especialista of listaEspecialistas" >
+            <tr>
+              <td>{{especialista?.nombre}}</td>
+              <td>{{especialista?.apellido}}</td>
+              <td> <img [src]="especialista?.fotosPerfil" alt="" width="50px" height="50px"> </td>
+              <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarEspecialistaTurnosSolicitados(especialista) " > Elegir Especialista </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  </div>
+  <div *ngIf="showEspecialistas2">
+      <div class="text-center">
+          <h2>Turnos Finalizados: Especialistas </h2>
+      </div>
+      <table  class="table"  >
+          <thead>
+            <tr>
+              <th scope="col">Nombre:</th>
+              <th scope="col">Apellido:</th>
+              <th></th>
+              <th  scope="col"> Acción </th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let especialista of listaEspecialistas" >
+            <tr>
+              <td>{{especialista?.nombre}}</td>
+              <td>{{especialista?.apellido}}</td>
+              <td> <img [src]="especialista?.fotosPerfil" alt="" width="50px" height="50px"> </td>
+              <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarEspecialistaTurnosFinalizados(especialista) " > Elegir Especialista </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  </div>
+  
+  <div *ngIf="showFechasTurnoSolicitados" class="divFechas">
+    
+      <div class="text-center">
+          <h3> Seleccionar Fechas </h3>
+      </div>
+  
+      <form [formGroup]="formaFechas">
+          <div class="row g-3">
+              <div class="col-sm-6">
+                  <input [matDatepicker]="basicDatepicker" placeholder="Fecha de inicio"  formControlName="fechaInicio" id="fechaI">
+                  <mat-datepicker-toggle [for]="basicDatepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #basicDatepicker></mat-datepicker>
+              </div>
+         
+              
+              <div class="col-sm-6">
+            
+                  <input [matDatepicker]="basicDatepicker2" placeholder="Fecha Final"  formControlName="fechaFinal" id="fechaF">
+                  <mat-datepicker-toggle [for]="basicDatepicker2"></mat-datepicker-toggle>
+                  <mat-datepicker #basicDatepicker2></mat-datepicker>
+              </div>
+      
+              <button  type="button" class="btn btn-success btnEstablecerFechas" (click)="seleccionarFechas()" [disabled]="formaFechas.invalid"  > Filtrar Turnos Realizados En estas fechas </button>
+          </div>
+         
+      </form>
+  </div>
+  <div *ngIf="showFechasTurnoFinalizado" class="divFechas">
+    
+      <div class="text-center">
+          <h3> Seleccionar Fechas Turnos Finalizados </h3>
+      </div>
+  
+      <form [formGroup]="formaFechas2">
+          <div class="row g-3">
+              <div class="col-sm-6">
+                  <input [matDatepicker]="basicDatepicker" placeholder="Fecha de inicio"  formControlName="fechaInicio" id="fechaI">
+                  <mat-datepicker-toggle [for]="basicDatepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #basicDatepicker></mat-datepicker>
+              </div>
+         
+              
+              <div class="col-sm-6">
+            
+                  <input [matDatepicker]="basicDatepicker2" placeholder="Fecha Final"  formControlName="fechaFinal" id="fechaF">
+                  <mat-datepicker-toggle [for]="basicDatepicker2"></mat-datepicker-toggle>
+                  <mat-datepicker #basicDatepicker2></mat-datepicker>
+              </div>
+      
+              <button  type="button" class="btn btn-success btnEstablecerFechas" (click)="seleccionarFechasTurnoFinalizado()" [disabled]="formaFechas2.invalid"  > Filtrar Turnos Realizados En estas fechas </button>
+          </div>
+         
+      </form>
+  </div>
+  
+  
+  <div *ngIf="showLogs" id="tablaLogs" #tablaLogs >
+    <div class="text-center">
+      <h2>Logs Usuarios </h2>
+  </div>
+  <button class="btn" (click)="generarExcel()" >
+    <img src="https://e7.pngegg.com/pngimages/108/891/png-clipart-microsoft-excel-computer-icons-export-microsoft-angle-logo-thumbnail.png" alt="" width="50px" height="50px">
+  </button>
     <table  class="table"  >
-        <thead>
-          <tr>
-            <th scope="col">Nombre:</th>
-            <th scope="col">Apellido:</th>
-            <th></th>
-            <th  scope="col"> Acción </th>
-          </tr>
-        </thead>
-        <tbody *ngFor="let especialista of listaEspecialistas" >
-          <tr>
-            <td>{{especialista?.nombre}}</td>
-            <td>{{especialista?.apellido}}</td>
-            <td> <img [src]="especialista?.fotosPerfil" alt="" width="100px" height="100px"> </td>
-            <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="clasificarTurnosxDiaxEspecialista(especialista?.uid) " > Elegir Especialista </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-</div>
-
-
-<p>Fecha Inicio</p>
-<p> {{fechaInicio.toLocaleDateString()}}  mes/dia/año</p>
-
-<p>Fecha Final</p>
-<p> {{fechaFinal.toLocaleDateString()}} </p>
-
-<div *ngIf="datosListosTurnosxEspecialidades">
-    <h2> Turnos por Especialidad </h2>
-    <x-chartist  [type]="type" [data]="data" [options]="options" > </x-chartist>
-</div>
-
-<div *ngIf="datosListosTurnosxDias">
-    <h2> Turnos por Días </h2>
-    <x-chartist  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist>
-</div>
-
-<div *ngIf="datosListosTurnosSolicitados">
-    <h2> Turnos Solicitados X Especialista en Rango de fecha </h2>
-    <x-chartist  [type]="type2" [data]="dataTurnosSolicitadosxEspecialistaxRangoFecha" [options]="options2" > </x-chartist>
-</div>
+      <thead>
+        <tr>
+          <th scope="col">ID:</th>
+          <th scope="col">Nombre:</th>
+          <th scope="col">Perfil</th>
+          <th scope="col">Fecha - Hora </th>
+          <th scope="col">¿Administrador?</th>
+  
+  
+        </tr>
+      </thead>
+      <tbody *ngFor="let log of listaLogs" >
+        <tr>
+          <td>{{log?.id}}</td>
+          <td>{{log?.usuario}}</td>
+          <td> {{log?.perfil}} </td>
+          <td> {{log?.fecha}} {{log?.horario}} </td>
+          <td> {{log.isAdmin?'si':'no' }} </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="datosListosTurnosxEspecialidades"  >
+      <div class="text-center"> <h2> Turnos por Especialidad </h2> </div>
+      <button class="btn" (click)="crearPdf()" >
+        <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
+      </button>
+      <div id="graficaTurnoxEspecialidad" #graficaTurnoxEspecialidad >
+        <x-chartist  [type]="type" [data]="data" [options]="options" > </x-chartist>
+      </div>
+     
+  </div>
+  
+  <div *ngIf="datosListosTurnosxDias" id="graficaTurnoxDia" #graficaTurnoxDia >
+      <div class="text-center">  <h2> Turnos por Días </h2>  </div>
+      <button class="btn" (click)="downloadPDF()" >
+        <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
+      </button>
+      <x-chartist  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist>
+  </div>
+  
+  
+  <div *ngIf="datosListosTurnosSolicitados" id="graficaTurnoSolicitado" #graficaTurnoSolicitado>
+      <div class="text-center">
+         <h2> TURNOS SOLICITADOS </h2>
+         <p>Mostrando entre {{fechaInicioTurnosSolicitado.toLocaleDateString()}} - {{fechaFinalTurnosSolicitado.toLocaleDateString()}} </p>
+      </div>
+  
+       <button class="btn" (click)="generarPDF('ListaTurnoSolicitados')" >
+        <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
+      </button>
+      <x-chartist  [type]="type2" [data]="dataTurnosSolicitadosxEspecialistaxRangoFecha" [options]="options2" > </x-chartist>
+  </div>
+  
+  <div *ngIf="datosListosTurnosFinalizados" id="graficaTurnoFinalizado" #graficaTurnoFinalizado>
+      <div class="text-center">
+         <h2> TURNOS FINALIZADOS </h2> 
+         <p>Mostrando entre {{fechaInicioTurnosFinalizados.toLocaleDateString()}} - {{fechaFinalTurnosFinalizados.toLocaleDateString()}} </p>
+      
+        </div>
+      <button class="btn" (click)="generarPDF('ListaTurnoFinalizado')" >
+        <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
+      </button>
+      <x-chartist *ngIf="hayDatosTurnoFinalizado"  [type]="type" [data]="dataTurnosFinalizadosxEspecialistaxRangoFecha" [options]="options" > </x-chartist>
+      <div  *ngIf="!hayDatosTurnoFinalizado"  class="text-center">
+        <img src="https://img2.freepng.es/20180708/jc/kisspng-computer-icons-error-download-triangle-icon-5b41d8cf15fe41.1288295315310419990901.jpg" alt="" width="100px" height="100px">
+        <p>UPS PARECE QUE NO HAY DATOS PARA MOSTRAR CON LOS CRITERIOS ESTABLECIDOS. </p>
+      </div>
+  </div>
+  
+</main>

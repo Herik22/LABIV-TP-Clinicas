@@ -104,12 +104,6 @@ export class FormUComponent implements OnInit {
       }  //agrego una especialidad.
       
     }
-   
-
-   // this.auxUsuario.especialidad=this.formaEspecialista.value.especialidad
-   
-    console.log(this.auxUsuario)
-
 
 let reader =new FileReader()
     reader.readAsDataURL(this.fotoEspecialista)
@@ -127,9 +121,23 @@ let reader =new FileReader()
           this.auxUsuario.uid = rta.user?.uid
           this.auxUsuario.perfil = 'Especialista'
           let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
-        //this.loading=false
-        rtaGuardarEspecilista.status && this.formaEspecialista.reset()
-        rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])    
+          if(rtaGuardarEspecilista.status){
+            console.log('GUARDADO EN LA COLECCION')
+            this.firebaseApi.enviarEmail()
+            .then(value=>{
+              console.log('ENVIADO EMAIL'+value)
+              //this.firebaseApi.logOut()
+              this.formaEspecialista.reset()
+              setTimeout(()=>{
+                this.ruteo.navigate(['/login'])  
+              },2000)
+              
+            })
+            .catch(err=>{
+              console.log('erro enviando el email'+err)
+            })
+
+          }
         })
         .catch(err=>{
           this.loading=false
@@ -179,8 +187,22 @@ let reader =new FileReader()
           //this.auxAdmin.uid = rta.user?.uid
           let rtaGuardarAdmin = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxAdmin)))
         //this.loading=false
-        rtaGuardarAdmin.status && this.formaEspecialista.reset()
-        rtaGuardarAdmin.status && this.ruteo.navigate(['/login'])    
+        if(rtaGuardarAdmin.status){
+          console.log('GUARDADO EN LA COLECCION')
+          this.firebaseApi.enviarEmail()
+          .then(value=>{
+            console.log('ENVIADO EMAIL'+value)
+            //this.firebaseApi.logOut()
+            this.formaEspecialista.reset()
+            setTimeout(()=>{
+              this.ruteo.navigate(['/login']) 
+            },2000)
+            
+          })
+          .catch(err=>{
+            console.log('erro enviando el email'+err)
+          })
+        } 
         })
         .catch(err=>{
           this.loading=false

@@ -80,20 +80,35 @@ export class RegistroComponent implements OnInit {
           if(i==1){
           this.firebaseApi.register(this.auxUsuario.email,this.auxUsuario.password)
           .then(rta=>{
-            console.log('rta register fb')
-            console.log(rta)
+
+            //this.firebaseApi.enviarEmail()
+            //this.firebaseApi.logOut() 
+ 
             this.auxUsuario.uid = rta.user?.uid
             this.auxUsuario.perfil='Paciente'
             let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
             //this.loading=false   
-            rtaGuardarEspecilista.status && this.formaPaciente.reset()
-            rtaGuardarEspecilista.status && this.ruteo.navigate(['/login'])     
+            if(rtaGuardarEspecilista.status){
+              console.log('GUARDADO EN LA COLECCION')
+              this.firebaseApi.enviarEmail()
+              .then(value=>{
+                console.log('ENVIADO EMAIL'+value)
+               // this.firebaseApi.logOut()
+                this.formaPaciente.reset()
+                setTimeout(()=>{
+                  this.ruteo.navigate(['/login'])  
+                },2000)
+                
+              })
+              .catch(err=>{
+                console.log('erro enviando el email'+err)
+              })
+            }
           })
           .catch(err =>{
             this.loading=false   
             console.log('error al crear usuario fb'+err)
-          })
-            
+          })           
           }       
         }  
        })

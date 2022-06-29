@@ -33,6 +33,7 @@
               <li *ngIf="perfilUser == 'Paciente' || perfilUser == 'Especialista'  " ><a class="dropdown-item"  style="color: grey;" (click)="goToTurnos('misTurnos')">Mis Turnos </a></li>
             </ul>
           </li>
+          
            <li *ngIf="isLogged && isAdmin " class="nav-item">
             <a class="nav-link active" aria-current="page" href="#" style="color: black;" [routerLink]="['estadisticas']" > Estadisticas </a>
           </li>

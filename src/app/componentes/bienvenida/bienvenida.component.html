@@ -7,17 +7,15 @@
         <p class="lead mb-4"><b>Especialista en salud</b>, cuenta actualmente con consultorios (6 en la actualidad),
             dos laboratorios (físicos en la clínica), y una sala de espera general. Está abierta al público de lunes a
             viernes en el horario de 8:00 a 19:00, y los sábados en el horario de 8:00 a 14:00.</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        
+        <div *ngIf="!isLogged" class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <button type="button" class="btn btn-primary btn-lg px-4 gap-3" (click)="goToLogin()">Iniciar Sesión </button>
           <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="goToRegistro()">Registrarse </button>
         </div>
-       <!--<p>isAdmin = {{isAdmin}} </p>--> 
-        <!--<p>isEspecialista = {{isEspecialista}} </p>--> 
-       <!--<p>isPaciente = {{isPaciente}} </p>-->  
  
       </div>
     </div>
   
     <div class="b-example-divider"></div>
-    <app-form-compartido></app-form-compartido>
+
   </main>
