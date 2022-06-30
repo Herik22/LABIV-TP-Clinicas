@@ -16,6 +16,8 @@ import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 import jsPDF from 'jspdf'; 
 import * as XLSX from 'xlsx'; 
 var uniqid = require('uniqid');
+//import { Chart } from 'node_modules/chart.js'
+import Chart from 'chart.js/auto';
 import html2canvas from 'html2canvas';
 import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
 
@@ -140,8 +142,7 @@ export class EstadisticasComponent implements OnInit {
   fechaFinalTurnosFinalizados:Date = new Date()
 
 
-  showEspecialistas:boolean=false
-  showEspecialistas2:boolean=false
+
   especialistaSelected:Usuario= new Usuario()
 
 
@@ -247,6 +248,69 @@ export class EstadisticasComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  async crearPdfxDia() {
+    let doc = new jsPDF();
+    await html2canvas(this.refGraficaTurnoxDia.nativeElement).then((canvas) => {
+      
+      const imgData = canvas.toDataURL('image/PNG');
+      const bufferX = 5;
+      const bufferY = 60;
+      const imgProps = (doc as any).getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      doc.addImage(imgData, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
+    })
+    doc.output('dataurlnewwindow', { filename: 'turnosxDias' });
+    return true;
+  }
+  
+  async crearPdfxEspecialidad() {
+    let doc = new jsPDF();
+    await html2canvas(this.refGraficaTurnoxEspecialidad.nativeElement).then((canvas) => {
+      
+      const imgData = canvas.toDataURL('image/PNG');
+      const bufferX = 5;
+      const bufferY = 60;
+      const imgProps = (doc as any).getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      doc.addImage(imgData, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
+    })
+    doc.output('dataurlnewwindow', { filename: 'turnosxEspecialidad' });
+    return true;
+  }
+  async crearPdfSolicitado() {
+    let doc = new jsPDF();
+    await html2canvas(this.refGraficaTurnosSolicitados.nativeElement).then((canvas) => {
+      
+      const imgData = canvas.toDataURL('image/PNG');
+      const bufferX = 5;
+      const bufferY = 60;
+      const imgProps = (doc as any).getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      doc.addImage(imgData, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
+    })
+    doc.output('dataurlnewwindow', { filename: 'turnosSolicitados' });
+    return true;
+  }
+  async crearPdfFinalizado() {
+    let doc = new jsPDF();
+    await html2canvas(this.refGraficaTurnosFinalizados.nativeElement).then((canvas) => {
+      
+      const imgData = canvas.toDataURL('image/PNG');
+      const bufferX = 5;
+      const bufferY = 60;
+      const imgProps = (doc as any).getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      doc.addImage(imgData, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
+    })
+    doc.output('dataurlnewwindow', { filename: 'turnos-Finalizados' });
+    return true;
+  }
+
+
   generarExcel(){
     
     let nameFile = `tablaLogs_${uniqid()}`
@@ -262,142 +326,6 @@ export class EstadisticasComponent implements OnInit {
     XLSX.writeFile(wb, nameFile);
    
   }
-  downloadPDF() {
-    // Extraemos el
-    const DATA =  <HTMLElement>document.getElementById('graficaTurnoxDia');
-    const doc = new jsPDF('p', 'pt', 'a4');
-    const options = {
-      background: 'white',
-      scale: 3
-    };
-
-    html2canvas(DATA, options).then((canvas) => {
-
-      const img = canvas.toDataURL('image/PNG');
-
-      // Add image Canvas to PDF
-      const bufferX = 15;
-      const bufferY = 15;
-      const imgProps = (doc as any).getImageProperties(img);
-      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      doc.addImage(img, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
-      return doc;
-    }).then((docResult) => {
-      docResult.save(`${new Date().toISOString()}_tutorial.pdf`);
-    });
-  }
-  descargarPDF(){
-    html2canvas(this.refGraficaTurnoxEspecialidad.nativeElement).then((canvas)=>{
-      const imgData = canvas.toDataURL('image/jpeg');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-      });
-      
-      const imageProps = pdf.getImageProperties(imgData);
-      const pdfw = pdf.internal.pageSize.getWidth();
-      const pdfh = (imageProps.height* pdfw)/ imageProps.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfw, pdfh);
-      pdf.save('clinicaBernheimInformes.pdf');
-    })
-  }
-  async descargarPDF2 (){
-
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-    });
-    pdf.text('PRUEBA TITULOO',20,40)
-    pdf.setFontSize(13)
-    pdf.text('otro tiulo xd',4,10)
-    pdf.setFontSize(20)
-    pdf.addImage(this.auxImage,'JPEG',193,2,15,15)
-    let graficoImprimir:any= document.getElementById('graficaTurnoxEspecialidad')
-
-    await html2canvas(graficoImprimir).then(canvas=>{
-      let img = canvas.toDataURL('image/PNG')
-      let bufferX = 5
-      let bufferY = 60
-      let imgProps = (pdf as any).getImageProperties(img)
-      let pdfWidth = pdf.internal.pageSize.getWidth()/imgProps.width
-      let pdfHeight = (imgProps.height * pdfWidth)/imgProps.width
-
-      pdf.addImage(img,'PNG',bufferX,bufferY,pdfWidth,pdfHeight,undefined,'FAST')
-    })
-    pdf.output('dataurlnewwindow',{filename:'TurnosxEspecialidad'})
-
-  }
-  async crearPdf() {
-    let doc = new jsPDF();
-    await html2canvas(this.refGraficaTurnoxEspecialidad.nativeElement).then((canvas) => {
-      const imgData = canvas.toDataURL('image/PNG');
-      const bufferX = 5;
-      const bufferY = 60;
-      const imgProps = (doc as any).getImageProperties(imgData);
-      const pdfWidth = doc.internal.pageSize.getWidth() - 2 * bufferX;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      doc.addImage(imgData, 'PNG', bufferX, bufferY, pdfWidth, pdfHeight, undefined, 'FAST');
-    })
-    doc.output('dataurlnewwindow', { filename: 'turnos-por-especialida' });
-    return true;
-  }
-
-
-
-  generarPDF(tipoPDF:string)
- {
-  
-  switch(tipoPDF){
-    case 'ListadoLogs':
-      let pdf = new jsPDF('p','pt','a4');
-      let id = uniqid()
-      pdf.html(this.el.nativeElement,{
-        callback:(pdf)=>{
-          pdf.save(`${tipoPDF}_${id}.pdf`);
-        }
-      })
-      break;
-    case 'ListaTurnoXEspecialidad':
-      let pdf2 = new jsPDF('p','pt','a4');
-      let id2 = uniqid()
-        pdf2.html(this.refGraficaTurnoxEspecialidad.nativeElement,{
-          callback:(pdf)=>{
-            pdf.save(`${tipoPDF}_${id2}.pdf`);
-          }
-        })
-        break;
-    case 'ListaTurnoXDia':
-        let pdf3 = new jsPDF('p','pt','a4');
-        let id3 = uniqid()
-          pdf3.html(this.refGraficaTurnoxDia.nativeElement,{
-            callback:(pdf)=>{
-              pdf.save(`${tipoPDF}_${id3}.pdf`);
-            }
-          })
-        break;
-        case 'ListaTurnoSolicitados':
-          let pdf4 = new jsPDF('p','pt','a4');
-          let id4 = uniqid()
-            pdf4.html(this.refGraficaTurnosSolicitados.nativeElement,{
-              callback:(pdf)=>{
-                pdf.save(`${tipoPDF}_${id4}.pdf`);
-              }
-            })
-          break;
-          case 'ListaTurnoFinalizado':
-            let pdf5 = new jsPDF('p','pt','a4');
-            let id5 = uniqid()
-              pdf5.html(this.refGraficaTurnosFinalizados.nativeElement,{
-                callback:(pdf)=>{
-                  pdf.save(`${tipoPDF}_${id5}.pdf`);
-                }
-              })
-            break;
-  }
- 
-
- }
-
 
   generarPrimerasGraficas(){
     this.clasificarTurnoxEspecialidad()
@@ -405,65 +333,70 @@ export class EstadisticasComponent implements OnInit {
     this.clasificarLogs()
   }
 
-  mergeListaDias(lista:any[]){
-    let listaMerge :any[]=[]
 
-    lista.forEach(value=>{
-      let auxDiaString = value.fecha.toLocaleDateString()
 
-      if(!listaMerge.includes(auxDiaString)){
-        listaMerge.push(auxDiaString)
+  turnoxDiaGraficoCHart(labels:any[],data:any[]){
+
+    const myChart = new Chart('chartJSXdia', {
+      type: 'line',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: '# turnos x Día',
+              data: data,
+              fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
       }
-      
-    })
-
-
-    return listaMerge
+  });
   }
-  mergeListaEspecialistas(lista:any[]){
-    let listamergeEspecialista :any[]=[]
-
-    lista.forEach(value=>{
-
-      if(!listamergeEspecialista.includes(value)){
-        listamergeEspecialista.push(value)
+  turnoSolicitados(labels:any[],data:any[]){
+    const myChart = new Chart('chartJSxSolicitados', {
+      type: 'polarArea',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: '# turnos x Día',
+              data: data,
+              //fill: false,
+      borderColor: 'aqua',
+     // tension: 0.1
+    }]
       }
-      
-    })
-
-
-    return listamergeEspecialista
+  });
   }
-  mergeListaLogs(lista:any[]){
-    
-    let listaLogsMerge :any[]=[]
-    console.log('listaLogsMerge previo al foreach')
-    console.log(listaLogsMerge)
-
-
-    lista.forEach(value=>{
-      console.log('VALUE EN EL LISTA.FOREACH DEL MERGELISTALOGS')
-      console.log(value)
-      
-      // si en la lista de los mergeados no esta incluido el valor, lo incluyo sino no
-      if(!listaLogsMerge.includes(value)){
-        listaLogsMerge.push(value)
-      }
-      
-    })
-
-    console.log('listaLogsMerge xespues ')
-    console.log(listaLogsMerge)
-
-
-    return listaLogsMerge
+  turnoFinalizados(labels:any[],data:any[]){
+    const myChart = new Chart('chartJSxFinalizados', {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: '# turnos x Día',
+              data: data,        
+             // fill: false,
+              borderColor: 'aqua',
+            //tension: 0.1
+            barPercentage: 0.5,
+        barThickness: 6,
+        maxBarThickness: 8,
+        minBarLength: 2,
+        }],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      },
+  });
   }
-
+  
 
   clasificarLogs(){
     this.showLogs=true
   }
-
   clasificarTurnoxEspecialidad(){
 
     let auxListaEspecialidades = this.listaEspecialidades.map(value=>{
@@ -483,6 +416,7 @@ export class EstadisticasComponent implements OnInit {
     let auxLabelsGraficoTurnoxEspecialidades:any[]=[]
     let auxValuesGraficoTurnoxEspecialidades:number[]=[]
 
+
     auxListaEspecialidades.forEach(value=>{
       auxLabelsGraficoTurnoxEspecialidades.push(value.name)
       auxValuesGraficoTurnoxEspecialidades.push(value.cantidad)
@@ -491,13 +425,14 @@ export class EstadisticasComponent implements OnInit {
     this.data.labels= auxLabelsGraficoTurnoxEspecialidades
     let auxSerie = [auxValuesGraficoTurnoxEspecialidades]
 
+
     this.data.series=auxSerie
 
     this.datosListosTurnosxEspecialidades=true
+ 
     
     //verifico 
   }
-
   clasificarTurnosxDia(){
     let auxListaDiasTurnos = this.listaTurnos.map(value=>{
       let auxDate = new Date(value.fecha)
@@ -543,11 +478,11 @@ export class EstadisticasComponent implements OnInit {
     this.dataTurnosxDia.series=auxSerie
 
     this.datosListosTurnosxDias=true
-
+    //***************//***************//*************** */
+    //prueba Chart
+    this.turnoxDiaGraficoCHart(auxLabelsGraficoTurnoxDia,auxValuesGraficoTurnoxDia)
+    //***************//***************//*************** */
   }
-
- 
-
   prepararTurnosSolicitadosxTemporada(fechaInicio:Date,fechaFinal:Date){
 
     // obtengo una copia de TODOS LOS TURNOS de la coleccion. 
@@ -612,9 +547,11 @@ export class EstadisticasComponent implements OnInit {
     this.dataTurnosSolicitadosxEspecialistaxRangoFecha.labels=auxLabelsTurnosSolicitados
     this.dataTurnosSolicitadosxEspecialistaxRangoFecha.series=auxValuesTurnosSolicitados
     this.datosListosTurnosSolicitados=true
+    /*************************************************************************** */
+    this.turnoSolicitados(auxLabelsTurnosSolicitados,auxValuesTurnosSolicitados)
+    /*************************************************************************** */
     return true
   }
-
   prepararTurnosFinalizadosxTemporada(fechaInicio:Date,fechaFinal:Date){
 
     let retorno = false
@@ -673,36 +610,17 @@ export class EstadisticasComponent implements OnInit {
     this.dataTurnosFinalizadosxEspecialistaxRangoFecha.series=[auxValuesTurnosSolicitados]
 
     this.datosListosTurnosFinalizados=true
+
+    /******************************************************************************** */
+    this.turnoFinalizados(auxLabelsTurnosSolicitados,auxValuesTurnosSolicitados)
+   /******************************************************************************** */
     newArrayconCantidadesSinDuplicados.length>0 ? retorno= true : retorno= false
 
     return retorno
   }
-
-
-
-
   mostrarFechas(finalizado:boolean=false){
     finalizado?this.showFechasTurnoFinalizado=!this.showFechasTurnoFinalizado :this.showFechasTurnoSolicitados=!this.showFechasTurnoSolicitados 
   }
-
-
-  seleccionarEspecialistaTurnosSolicitados(especialista:Usuario){
-    this.especialistaSelected = especialista
-
-    //activo la selección de fechas y oculto el listado
-    this.showEspecialistas=!this.showEspecialistas
-    this.showFechasTurnoSolicitados = true
-  }
-  seleccionarEspecialistaTurnosFinalizados(especialista:Usuario){
-    this.especialistaSelected = especialista
-
-    //activo la selección de fechas y oculto el listado
-    this.showEspecialistas2=!this.showEspecialistas2
-    this.showFechasTurnoFinalizado = true
-  }
-
-
-
 
 
   seleccionarFechas(){

@@ -1,6 +1,7 @@
 
 <main @transicionUp-Down>
-  <div class="text-center" >
+
+  <div  class="text-center" >
     <h1>   ESTADÍSTICAS   </h1>
   </div>
   
@@ -10,54 +11,7 @@
   <button @transicionDer-Izq *ngIf="turnosCargados && especialidadesCargadas "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="mostrarFechas() " > Generar datos Grafico  (TURNOS SOLICITADOS X DÍA x ESPECIALISTA )</button>
   <button @transicionDer-Izq  *ngIf="turnosCargados && especialidadesCargadas "  style="margin: 10px;color: white; " type="button" class="btn btn-dark" (click)="mostrarFechas(true) " > Generar datos Grafico  (TURNOS FINALIZADOS X DÍA x ESPECIALISTA )</button>
   
-  <div *ngIf="showEspecialistas">
-      <div class="text-center">
-          <h2>Turnos Solicitados: Especialistas </h2>
-      </div>
-      <table  class="table"  >
-          <thead>
-            <tr>
-              <th scope="col">Nombre:</th>
-              <th scope="col">Apellido:</th>
-              <th></th>
-              <th  scope="col"> Acción </th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let especialista of listaEspecialistas" >
-            <tr>
-              <td>{{especialista?.nombre}}</td>
-              <td>{{especialista?.apellido}}</td>
-              <td> <img [src]="especialista?.fotosPerfil" alt="" width="50px" height="50px"> </td>
-              <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarEspecialistaTurnosSolicitados(especialista) " > Elegir Especialista </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-  </div>
-  <div *ngIf="showEspecialistas2">
-      <div class="text-center">
-          <h2>Turnos Finalizados: Especialistas </h2>
-      </div>
-      <table  class="table"  >
-          <thead>
-            <tr>
-              <th scope="col">Nombre:</th>
-              <th scope="col">Apellido:</th>
-              <th></th>
-              <th  scope="col"> Acción </th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let especialista of listaEspecialistas" >
-            <tr>
-              <td>{{especialista?.nombre}}</td>
-              <td>{{especialista?.apellido}}</td>
-              <td> <img [src]="especialista?.fotosPerfil" alt="" width="50px" height="50px"> </td>
-              <td> <button  style="margin: 10px;color: white; " type="button" class="btn btn-info" (click)="seleccionarEspecialistaTurnosFinalizados(especialista) " > Elegir Especialista </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-  </div>
+
   
   <div *ngIf="showFechasTurnoSolicitados" class="divFechas">
     
@@ -148,7 +102,7 @@
 
   <div *ngIf="datosListosTurnosxEspecialidades"   >
       <div class="text-center"> <h2> Turnos por Especialidad </h2> </div>
-      <button class="btn" (click)="descargarPDF2()" >
+      <button class="btn" (click)="crearPdfxEspecialidad()" >
         <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
       </button>
       <div id="graficaTurnoxEspecialidad" #graficaTurnoxEspecialidad  >
@@ -157,40 +111,40 @@
      
   </div>
   
-  <div *ngIf="datosListosTurnosxDias" id="graficaTurnoxDia" #graficaTurnoxDia >
-      <div class="text-center">  <h2> Turnos por Días </h2>  </div>
-      <button class="btn" (click)="downloadPDF()" >
+  <div  id="graficaTurnoxDia" #graficaTurnoxDia >
+      <div *ngIf="datosListosTurnosxDias" class="text-center">  <h2> Turnos por Días </h2>  </div>
+      <button *ngIf="datosListosTurnosxDias" class="btn" (click)="crearPdfxDia()" >
         <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
       </button>
-      <x-chartist  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist>
+     <!-- <x-chartist *ngIf="datosListosTurnosxDias"  [type]="type" [data]="dataTurnosxDia" [options]="options" > </x-chartist> --> 
+      <canvas id="chartJSXdia"  style="max-height:  400px;" ></canvas>
   </div>
   
-  <div *ngIf="datosListosTurnosSolicitados" id="graficaTurnoSolicitado" #graficaTurnoSolicitado>
-      <div class="text-center">
-         <h2> TURNOS SOLICITADOS </h2>
+  <div  id="graficaTurnoSolicitado" #graficaTurnoSolicitado >
+      <div *ngIf="datosListosTurnosSolicitados" class="text-center">
+         <h2> TURNOS   SOLICITADOS </h2>
          <p>Mostrando entre {{fechaInicioTurnosSolicitado.toLocaleDateString()}} - {{fechaFinalTurnosSolicitado.toLocaleDateString()}} </p>
       </div>
   
-       <button class="btn" (click)="generarPDF('ListaTurnoSolicitados')" >
+       <button  *ngIf="datosListosTurnosSolicitados"class="btn" (click)="crearPdfSolicitado()" >
         <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
       </button>
-      <x-chartist  [type]="type2" [data]="dataTurnosSolicitadosxEspecialistaxRangoFecha" [options]="options2" > </x-chartist>
+      <!--<x-chartist  [type]="type2" [data]="dataTurnosSolicitadosxEspecialistaxRangoFecha" [options]="options2" > </x-chartist>--> 
+      <canvas id="chartJSxSolicitados"  style="max-height:  400px;" ></canvas>
   </div>
   
-  <div *ngIf="datosListosTurnosFinalizados" id="graficaTurnoFinalizado" #graficaTurnoFinalizado>
-      <div class="text-center">
+  <div  id="graficaTurnoFinalizado" #graficaTurnoFinalizado >
+      <div *ngIf="datosListosTurnosFinalizados" class="text-center">
          <h2> TURNOS FINALIZADOS </h2> 
          <p>Mostrando entre {{fechaInicioTurnosFinalizados.toLocaleDateString()}} - {{fechaFinalTurnosFinalizados.toLocaleDateString()}} </p>
       
         </div>
-      <button class="btn" (click)="generarPDF('ListaTurnoFinalizado')" >
+      <button *ngIf="datosListosTurnosFinalizados" class="btn" (click)="crearPdfFinalizado()" >
         <img src="https://www.roomdiseno.com/wp-content/uploads/2019/11/20-200075_pdf-icon-share-download-pdf-logo-png-transparent.png.jpg" alt="" width="50px" height="50px">
       </button>
-      <x-chartist *ngIf="hayDatosTurnoFinalizado"  [type]="type" [data]="dataTurnosFinalizadosxEspecialistaxRangoFecha" [options]="options" > </x-chartist>
-      <div  *ngIf="!hayDatosTurnoFinalizado"  class="text-center">
-        <img src="https://img2.freepng.es/20180708/jc/kisspng-computer-icons-error-download-triangle-icon-5b41d8cf15fe41.1288295315310419990901.jpg" alt="" width="100px" height="100px">
-        <p>UPS PARECE QUE NO HAY DATOS PARA MOSTRAR CON LOS CRITERIOS ESTABLECIDOS. </p>
-      </div>
+     <!--  <x-chartist *ngIf="hayDatosTurnoFinalizado"  [type]="type" [data]="dataTurnosFinalizadosxEspecialistaxRangoFecha" [options]="options" > </x-chartist> -->
+      <canvas id="chartJSxFinalizados"  style="max-height:  400px;"  ></canvas>
+
   </div>
   
 </main>

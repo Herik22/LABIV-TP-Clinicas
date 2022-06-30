@@ -1,10 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Usuario } from 'src/app/entidades/usuario';
+import Swal from 'sweetalert2';
+import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
-  styleUrls: ['./perfil.component.scss']
+  styleUrls: ['./perfil.component.scss'],
+  animations:[
+    trigger('transicionUp-Down',[
+      state('void',style({
+        transform:'translateY(-100%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+    trigger('transicionDer-Izq',[
+      state('void',style({
+        transform:'translateX(200%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+   
+  ],
 })
 export class PerfilComponent implements OnInit {
 
@@ -12,10 +42,11 @@ export class PerfilComponent implements OnInit {
   uidUser:string|boolean=false
   auxUsuario:Usuario=new Usuario()
   especialidadSelected:any={"especilidaD":'','disponibilidad':0,'id':0}
-  newDisponibilidad:number=0
+  newDisponibilidad:number=30
   diasSemana:any[]=[{id:1,name:'Lunes'},{id:2,name:'Martes'},{id:3,name:'Miercoles'},{id:4,name:'Jueves'},{id:5,name:'Viernes'},{id:6,name:'Sabados'}]
   diasSeleccionados:number[]=[]
 
+  seleccionoDia:boolean = false
 
   constructor(private apiFB:FirebaseService) { 
 
@@ -61,9 +92,15 @@ export class PerfilComponent implements OnInit {
     
     let newEspecialidades = specialidades.map(value=>{ //obtengo un nuievo array de especialidades segun 
       
+      
       if(idEspecialidad === value.id){ // obtengo la especialidad que quiero modificar. 
-        value.disponibilidad = this.newDisponibilidad // seteo la nueva cantidad de minutos para el turno 
-        value.diasDisponibles = this.diasSeleccionados
+        if(this.seleccionoDia){
+          value.disponibilidad = this.newDisponibilidad // seteo la nueva cantidad de minutos para el turno 
+         value.diasDisponibles = this.diasSeleccionados
+        }else{
+          value.disponibilidad = this.newDisponibilidad
+        }
+      
       }
       return value
   })
@@ -77,18 +114,6 @@ export class PerfilComponent implements OnInit {
     console.log('ocurrio un error edirtando la especialidad ' + err)
   })
   
-
-  /*this.apiFB.updateDuracion(this.auxUsuario.uid,{... this.auxUsuario,especialidad:newEspecialidades})
-  .then(rta=>{
-    console.log('editada la duracion')
-    this.reLoad()
-  })
-  .catch(err=>{
-    console.log('ocurrio un error edirtando la duracion ' + err)
-  }) */ 
-
- 
-
   }
 
   reLoad(){
@@ -118,16 +143,40 @@ export class PerfilComponent implements OnInit {
   }
   seleccionarDia(dia:number){
     
+    this.seleccionoDia=true
     let valido= false
 
     if(this.diasSeleccionados.length>0){
       
       valido = this.diasSeleccionados.includes(dia)
       if(!valido){
-        alert('Dia agregado a tus horarios!')
+        Swal.fire({
+          title: 'listo!',
+          text: 'Dia agregado a tus horarios!',
+          icon: 'success',
+          timer: 1000,
+          toast: true,
+          backdrop: false,
+          position: 'bottom',
+          grow: 'row',
+          timerProgressBar: true,
+          showConfirmButton: false
+        })
         this.diasSeleccionados.push(dia)
       }else{
-        alert('ya seleccionaste este día') 
+        Swal.fire({
+          title: 'Ups!',
+          text: 'Ya seleccionaste este día!',
+          icon: 'warning',
+          timer: 1000,
+          toast: true,
+          backdrop: false,
+          position: 'bottom',
+          grow: 'row',
+          timerProgressBar: true,
+          showConfirmButton: false
+        })
+       
       }
     
     }else{

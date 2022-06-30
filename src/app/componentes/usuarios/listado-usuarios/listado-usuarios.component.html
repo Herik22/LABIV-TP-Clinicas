@@ -1,7 +1,9 @@
 <h2> Usuarios Pacientes </h2>
 <p>Este portal servirá para validar las cuentas de los Especialistas ademas de mostrar un listado de todos los usuarios registrados en el sistema </p>
-<button type="button" class="btn " style="background-color: #1D6F42;color: white" (click)="generarExcel()"> Generar Informe (Excel) </button>
-<table  class="table" id="excel-table"  >
+<button *ngIf="datosListos" @transicionDer-Izq  type="button" class="btn " style="background-color: #1D6F42;color: white" (click)="generarExcel()"> Generar Informe (Excel) </button>
+
+<div class="containerTabla">
+  <table *ngIf="datosListos" @transicionDer-Izq  class="table bgTable" id="excel-table"  >
     <thead>
       <tr>
         <th scope="col">Nombre:</th>
@@ -39,6 +41,8 @@
       </tr>
     </tbody>
 </table>
+
+</div>
 
 <!-- Modal HISTORIAL CLINICO  -->
 <div class="modal fade" id="modalInfoExtra" tabindex="-1" aria-labelledby="modalInfoExtra" aria-hidden="true">

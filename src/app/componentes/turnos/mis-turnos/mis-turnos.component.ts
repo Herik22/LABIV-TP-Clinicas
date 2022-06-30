@@ -6,11 +6,41 @@ import { HistoriaClinica } from 'src/app/entidades/historiaClinica';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
 import { Console } from 'console';
 import { normalize } from 'path';
+import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
+
 var uniqid = require('uniqid'); 
 @Component({
   selector: 'app-mis-turnos',
   templateUrl: './mis-turnos.component.html',
-  styleUrls: ['./mis-turnos.component.scss']
+  styleUrls: ['./mis-turnos.component.scss'],
+  animations:[
+    trigger('transicionUp-Down',[
+      state('void',style({
+        transform:'translateY(-100%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+    trigger('transicionDer-Izq',[
+      state('void',style({
+        transform:'translateX(200%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+   
+  ],
+
 })
 export class MisTurnosComponent implements OnInit {
 

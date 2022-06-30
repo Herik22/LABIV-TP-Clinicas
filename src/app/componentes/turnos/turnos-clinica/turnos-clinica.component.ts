@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
+import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
 
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
 
@@ -9,7 +10,34 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 @Component({
   selector: 'app-turnos-clinica',
   templateUrl: './turnos-clinica.component.html',
-  styleUrls: ['./turnos-clinica.component.scss']
+  styleUrls: ['./turnos-clinica.component.scss'],
+  animations:[
+    trigger('transicionUp-Down',[
+      state('void',style({
+        transform:'translateY(-100%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+    trigger('transicionDer-Izq',[
+      state('void',style({
+        transform:'translateX(200%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+   
+  ],
 })
 export class TurnosClinicaComponent implements OnInit {
 

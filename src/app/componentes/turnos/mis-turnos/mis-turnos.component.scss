@@ -1,8 +1,21 @@
 body{
 
-	background-color: #f7f6f6;
+	background-color: #8ed7ff;
 }
-
+.containerTabla{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+.bgTable{
+    background-color: #8ed7ff;
+    margin: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    align-self: center;
+}
 .card{
 
 	width: 350px;

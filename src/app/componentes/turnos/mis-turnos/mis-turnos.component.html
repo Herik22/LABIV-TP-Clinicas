@@ -1,9 +1,9 @@
 
 <div class="text-center">
-  <h1> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
+  <h1 style="font-weight: bold;"> {{currenUser.perfil=='Paciente'?'Mis turnos Paciente':'Mis Turnos Especialista'}} </h1>
 </div>
 
-<button class="btn btn-light" (click)="activarFiltrosUnicos()" appChangeTittleFiltro>
+<button *ngIf="turnosCargados"  @transicionUp-Down  class="btn btn-light" (click)="activarFiltrosUnicos()" appChangeTittleFiltro>
   <h3>FILTRAR ⬇️ ⬇️</h3>
 </button>
 
@@ -72,55 +72,58 @@
   </tbody>
 </table>
 
+<div class="containerTabla">
 <!-- LISTADO DE TODOS LOS TURNOS -->
-<table *ngIf="turnosCargados" class="table" >
-    <thead>
-      <tr>
-        <th scope="col"> ID </th>
-        <th scope="col">fecha</th>   
-        <th scope="col">Paciente</th>
-        <th scope="col">Obra Social</th>
-        <th scope="col">Especialista</th>   
-        <th scope="col">Area (Especialidad)</th>   
-        <th scope="col">Estado</th>  
-        <th scope="col">Acciones </th>
+<table *ngIf="turnosCargados"  @transicionUp-Down  class="table bgTable" >
+  <thead>
+    <tr>
+      <th scope="col"> ID </th>
+      <th scope="col">fecha</th>   
+      <th scope="col">Paciente</th>
+      <th scope="col">Obra Social</th>
+      <th scope="col">Especialista</th>   
+      <th scope="col">Area (Especialidad)</th>   
+      <th scope="col">Estado</th>  
+      <th scope="col">Acciones </th>
 
-      </tr>
-    </thead>
-    <tbody *ngFor="let turno of listaTurnos" >
-      <tr>
-        <td> {{turno.id}} </td>
-        <td>{{turno.fecha | fechaTurno}}</td>
-        <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
-        <td>{{turno.paciente.obraSocial}}</td>
-        <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
-        <td > {{turno.especialidad.especialidad}} </td>
-        <td style="font-weight: bold;" appDestacar> {{turno.status | transformarEstado }} </td>
-        <td>
-            <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
-    
-           <!-- <button *ngIf=" turno.historialGenerado==false  && currenUser.perfil==='Especialista' &&  turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)"> Generar Historial Clinico </button>      -->  
-           <!--<button *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      --> 
-            <a class="btn btn-primary" *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 " data-bs-toggle="modal" href="#exampleModalToggle" role="button" (click)="seleccionarTurnoParaComentario(turno)" >Finalizar Turno</a>
+    </tr>
+  </thead>
+  <tbody *ngFor="let turno of listaTurnos" >
+    <tr>
+      <td> {{turno.id}} </td>
+      <td>{{turno.fecha | fechaTurno}}</td>
+      <td>{{turno.paciente.nombre}} {{turno.paciente.apellido}}</td>
+      <td>{{turno.paciente.obraSocial}}</td>
+      <td>{{turno.especialista.nombre}} {{turno.especialista.apellido}}</td>
+      <td > {{turno.especialidad.especialidad}} </td>
+      <td style="font-weight: bold;" appDestacar> {{turno.status | transformarEstado }} </td>
+      <td>
+          <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
   
+         <!-- <button *ngIf=" turno.historialGenerado==false  && currenUser.perfil==='Especialista' &&  turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)"> Generar Historial Clinico </button>      -->  
+         <!--<button *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      --> 
+          <a class="btn btn-primary" *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 " data-bs-toggle="modal" href="#exampleModalToggle" role="button" (click)="seleccionarTurnoParaComentario(turno)" >Finalizar Turno</a>
 
-            <button *ngIf="currenUser.perfil==='Especialista' &&  turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
-            <button *ngIf="  turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
-            <button *ngIf=" currenUser.perfil==='Especialista' && turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
-            <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
-            <button *ngIf="turno.status === 3 &&  turno.encuestaCompletada == false"  style="margin: 10px;color: black; " type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#exampleModal3" (click)="realizarEncuesta(turno)"  >  Realizar Encuesta  </button>
-            <button *ngIf=" turno.encuestaCompletada"  style="margin: 10px;color: black; " type="button" class="btn btn-success"    >Encuesta realizada  </button>
-            <button *ngIf="turno.status === 3 && !turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal4" (click)="realizarCalificacion(turno)"  >  Calificar  </button>
-            <button *ngIf="turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "   >  ✅ Calificado ✅   </button> 
-            
-          </td>
-        <td>
-         
+
+          <button *ngIf="currenUser.perfil==='Especialista' &&  turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
+          <button *ngIf="  turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
+          <button *ngIf=" currenUser.perfil==='Especialista' && turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
+          <button *ngIf="turno.resenia || turno.comentario "  style="margin: 10px;color: black; " type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="seleccionarTurnoParaComentario(turno)"  >  Ver Reseña </button>
+          <button *ngIf="currenUser.perfil!='Especialista' &&  turno.status === 3 &&  turno.encuestaCompletada == false"  style="margin: 10px;color: black; " type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#exampleModal3" (click)="realizarEncuesta(turno)"  >  Realizar Encuesta  </button>
+          <button *ngIf=" turno.encuestaCompletada"  style="margin: 10px;color: black; " type="button" class="btn btn-success"    >Encuesta realizada  </button>
+          <button *ngIf="currenUser.perfil!='Especialista' && turno.status === 3 && !turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal4" (click)="realizarCalificacion(turno)"  >  Calificar  </button>
+          <button *ngIf="turno.calificacion"  style="margin: 10px;color: black;background-color: blueviolet; " type="button" class="btn "   >  ✅ Calificado ✅   </button> 
+          
         </td>
-    
-      </tr>
-    </tbody>
+      <td>
+       
+      </td>
+  
+    </tr>
+  </tbody>
 </table>
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

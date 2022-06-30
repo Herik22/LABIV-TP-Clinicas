@@ -2,12 +2,41 @@ import { Component, OnInit } from '@angular/core';
 import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import * as XLSX from 'xlsx'; 
+import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
+
 var uniqid = require('uniqid'); 
 
 @Component({
   selector: 'app-listado-usuarios',
   templateUrl: './listado-usuarios.component.html',
-  styleUrls: ['./listado-usuarios.component.scss']
+  styleUrls: ['./listado-usuarios.component.scss'],
+  animations:[
+    trigger('transicionUp-Down',[
+      state('void',style({
+        transform:'translateY(-100%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+    trigger('transicionDer-Izq',[
+      state('void',style({
+        transform:'translateX(200%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+   
+  ],
 })
 export class ListadoUsuariosComponent implements OnInit {
 
@@ -16,7 +45,7 @@ export class ListadoUsuariosComponent implements OnInit {
   
   nameColectionUsuarios:string ='UsuariosColeccion'
   usuarioSeleccionado:Usuario = new Usuario()
-
+  datosListos:boolean = false
   constructor(private firebaseApi:FirebaseService,) {
     this.firebaseApi.getUsuariosColl().subscribe(data=>{
       data.forEach(value=>{
@@ -26,6 +55,8 @@ export class ListadoUsuariosComponent implements OnInit {
         this.listaUsuarios.push({...value.data()})
        // this.listaUsuarios.push({...value.data(),idCollection:value.id})
       })
+      this.datosListos=true
+
     })    
    }
    

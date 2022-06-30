@@ -1,220 +1,11 @@
-<!--ORIGINAL -->
-<main *ngIf="true" class="banner" style="width: 100%; height:100% ">
-
-  <!-- LISTADOS SI EL TURNO LO SOLICITA UN ADMIN-->
-  <div *ngIf="!especialistaSelected && currenUser.isAdmin "  class="d-flex " style="justify-content: center; align-items:center; align-content:center; " >
-    <div *ngIf=" !pacienteSelected">
-      <h2> Selecciona al  
-        Paciente </h2>
-      <div  *ngFor="let paciente of listaPacientes" class="col">
-        <div class="card" style="width:200px">
-          <button class="btn" (click)="seleccionarPaciente(paciente)">
-          <img class="card-img-top" src={{paciente.fotosPerfil[0]}} alt="Card image" height="250px">
-          <div class="card-body">
-            <h4 class="card-title">{{paciente.nombre}} {{paciente.apellido}} </h4>
-            <p class="card-text">Obra Social {{paciente.obraSocial}} </p>
-          </div>
-        </button>
-        </div>
-  
-      </div>
-    </div>
-    
-
-    <div *ngIf="pacienteSelected">
-      <h2> Selecciona al  Especialista </h2>
-      <div  *ngFor="let item of listaEspeciaistas" class="col">
-        <div class="card" style="width:200px">
-          <button class="btn" (click)="seleccionarEspecialista(item)">
-          <img class="card-img-top" src={{item.fotosPerfil[0]}} alt="Card image" height="250px">
-          <div class="card-body">
-            <h4 class="card-title">{{item.nombre}} {{item.apellido}} </h4>
-            <p class="card-text">- Sus especialidades: </p>
-            <ul >
-              <li *ngFor="let item of item.especialidad" > {{item.especialidad}} </li>
-            </ul>
-            <p class="card-text">- Edad: {{item.edad}}  </p>
-            <a href="#" class="btn btn-primary">See Profile</a>
-          </div>
-        </button>
-        </div>
-     
-      </div>
-    </div>
-  </div>
-
-   <!-- LISTADOS SI EL TURNO LO SOLICITA UN PACIENTE-->
-	<div *ngIf="!especialistaSelected && !currenUser.isAdmin "  class="row row-cols-1 row-cols-md-2 g-4">
-
-    
-
-
-
-    <div  *ngFor="let item of listaEspeciaistas" class="col">
-      <div class="card" style="width:200px">
-        <button class="btn" (click)="seleccionarEspecialista(item)">
-        <img class="card-img-top" src={{item.fotosPerfil[0]}} alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{item.nombre}} {{item.apellido}} </h4>
-          <p class="card-text">- Sus especialidades: </p>
-          <ul >
-            <li *ngFor="let item of item.especialidad" > {{item.especialidad}} </li>
-          </ul>
-          <p class="card-text">- Edad: {{item.edad}}  </p>
-          <a href="#" class="btn btn-primary">See Profile</a>
-        </div>
-      </button>
-      </div>
-   
-    </div>
-
-
-  </div>
-
-  <!-- LISTADO DE ESPECIALIDADES DEL ESPECIALISTA SELCCIONADO-->
-  <div *ngIf="especialistaSelected && !isEspecialidadSelected || especialistaSelected && currenUser.isAdmin && pacienteSelected && !isEspecialidadSelected  "  class="row row-cols-1 row-cols-md-2 g-4">
-    <div  *ngFor="let item of listaEspedialidades" class="col">
-      <div class="card" style="width:400px">
-        <button class="btn" (click)="seleccionarEspecialidad(item)">
-        <img class="card-img-top" src={{item.img}} alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{item.especialidad}}</h4>
-        </div>
-      </button>
-      </div>
-   
-    </div>
-
-
-  </div>
-
-  <!--Seleccion de FECHAS SI ES UN PACIENTE -->
-  <div *ngIf="especialistaSelected && isEspecialidadSelected && !currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
-    <h2>Especialidad y Especialistas Seleccionados</h2>
-    <button class="btn" >   </button>
-    
-    <div  class="col">
-      <div class="card" style="width:300px">
-        <button class="btn">
-        <img class="card-img-top" [src]="especialidadSeleccionada.img" alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{especialidadSeleccionada.especialidad}}</h4>
-        </div>
-      </button>
-      </div>
-   
-    </div>
-
-    <div  class="col">
-    <div class="card" style="width:400px">
-      <button class="btn" >
-      <img class="card-img-top" src={{especialistaSeleccionado.fotosPerfil[0]}} alt="Card image" height="250px">
-      <div class="card-body">
-        <h4 class="card-title">{{especialidadSeleccionada.nombre}} {{especialidadSeleccionada.apellido}} </h4>
-        <p class="card-text">- Sus especialidades: </p>
-        <ul >
-          <li *ngFor="let item of especialistaSeleccionado.especialidad" > {{item.especialidad}} </li>
-        </ul>
-        <p class="card-text">- Edad: {{especialidadSeleccionada.edad}}  </p>
-        <a href="#" class="btn btn-primary">See Profile</a>
-      </div>
-    </button>
-    </div>
-    </div>
-
-      <div  *ngIf="tieneDiasDisponibles" >
-        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_ | transformarFecha }} </button>
-
-        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora | date:'shortTime'}}</button>
-  
-      </div>
-      <div *ngIf="!tieneDiasDisponibles">
-        <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
-      </div>
-
-      <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
-
-     
-
-  </div>
-
-  <!--Seleccion de FECHAS SI ES UN ADMINISTRADOR -->
-  <div *ngIf="especialistaSelected && isEspecialidadSelected && currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
-    <h2>Especialidad y Especialistas Seleccionados</h2>
-   
-    <!--PACIENTE-->
-    <div  class="col">
-      <div class="card" style="width:400px">
-        <button class="btn" >
-        <img class="card-img-top" src={{PacienteSeleccionado.fotosPerfil[0]}} alt="Card image" height="125px">
-        <img class="card-img-top" src={{PacienteSeleccionado.fotosPerfil[1]}} alt="Card image" height="125px">
-        <div class="card-body">
-          <h4 class="card-title">{{PacienteSeleccionado.nombre}} {{PacienteSeleccionado.apellido}} </h4>
-          <p class="card-text">- Obra Social: {{PacienteSeleccionado.obraSocial}} </p>
-          
-          <p class="card-text">- Edad: {{PacienteSeleccionado.edad}}  </p>
-
-        </div>
-      </button>
-      </div>
-      </div>
-    <!--ESPECIALIDAD-->
-    <div  class="col">
-      <div class="card" style="width:400px">
-        <button class="btn">
-        <img class="card-img-top" [src]='especialidadSeleccionada.img' alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{especialidadSeleccionada.especialidad}}</h4>
-        </div>
-      </button>
-      </div>
-   
-    </div>
-
-     <!--ESPECIALISTA-->
-    <div  class="col">
-    <div class="card" style="width:400px">
-      <button class="btn" >
-      <img class="card-img-top" src={{especialistaSeleccionado.fotosPerfil[0]}} alt="Card image" height="250px">
-      <div class="card-body">
-        <h4 class="card-title">{{especialidadSeleccionada.nombre}} {{especialidadSeleccionada.apellido}} </h4>
-        <p class="card-text">- Sus especialidades: </p>
-        <ul >
-          <li *ngFor="let item of especialistaSeleccionado.especialidad" > {{item.especialidad}} </li>
-        </ul>
-        <p class="card-text">- Edad: {{especialidadSeleccionada.edad}}  </p>
-        <a href="#" class="btn btn-primary">See Profile</a>
-      </div>
-    </button>
-    </div>
-    </div>
-
-    <div  *ngIf="tieneDiasDisponibles" >
-        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_.toDateString()}} </button>
-
-        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora.getMinutes()}} </button>
-  
-    </div>
-    <div *ngIf="!tieneDiasDisponibles">
-        <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
-    </div>
-    
-    <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
-
-     
-
-  </div>
-
-</main>
-
 
 <!-- EN PROCESO  -->
-<main *ngIf="false" class="banner" style="width: 100%; height:100% ">
-
+<main *ngIf="true" class="banner" style="width: 100%; height:100%;background-color: #BDDCE1; ">
 
   <!-- LISTADOS SI EL TURNO LO SOLICITA UN ADMIN-->
-  <div *ngIf="!especialistaSelected && currenUser.isAdmin "  class="d-flex " style="justify-content: center; align-items:center; align-content:center; " >
-    <div *ngIf=" !pacienteSelected">
+  <div @transicionUp-Down *ngIf="!especialidadSeleccionada2 && currenUser.isAdmin && !pacienteSelected " >
+    
+    <div *ngIf=" false">
       <h2> Selecciona al  
         Paciente </h2>
       <div  *ngFor="let paciente of listaPacientes" class="col">
@@ -230,53 +21,74 @@
   
       </div>
     </div>
-    
 
-    <div *ngIf="pacienteSelected">
-      <h2> Selecciona al  Especialista </h2>
-      <div  *ngFor="let item of listaEspeciaistas" class="col">
-        <div class="card" style="width:200px">
-          <button class="btn" (click)="seleccionarEspecialista(item)">
-          <img class="card-img-top" src={{item.fotosPerfil[0]}} alt="Card image" height="250px">
-          <div class="card-body">
-            <h4 class="card-title">{{item.nombre}} {{item.apellido}} </h4>
-            <p class="card-text">- Sus especialidades: </p>
-            <ul >
-              <li *ngFor="let item of item.especialidad" > {{item.especialidad}} </li>
-            </ul>
-            <p class="card-text">- Edad: {{item.edad}}  </p>
-            <a href="#" class="btn btn-primary">See Profile</a>
-          </div>
-        </button>
-        </div>
-     
-      </div>
+    <div  *ngIf=" !pacienteSelected" class="text-center">
+      <h1 style="font-weight: bold;"> SELECCIONAR PACIENTE </h1>
     </div>
+
+    <div class="row">
+      
+      <div class="col-lg-4" *ngFor="let paciente of listaPacientes" >
+        
+        <button class="btn" (click)="seleccionarPaciente(paciente)">
+        <img [src]="paciente.fotosPerfil[0]" alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal">{{paciente.nombre}} {{paciente.apellido}}</h2>
+        <p>Obra Social {{paciente.obraSocial}}</p>
+
+      </button>
+   
+      </div>
+    
+    </div>
+
   </div>
 
-   <!-- LISTADOS SI EL TURNO LO SOLICITA UN PACIENTE-->
-	<div *ngIf="!especialidadSeleccionada && !currenUser.isAdmin "  class="row row-cols-1 row-cols-md-2 g-4">
+   <!-- LISTADO DE ESPECIALIDAD SI EL TURNO LO SOLICITA UN PACIENTE O ADMINISTRADOR-->
+	<div @transicionUp-Down *ngIf="!especialidadSeleccionada2 && !currenUser.isAdmin ||  currenUser.isAdmin && pacienteSelected && !especialidadSeleccionada2"  >
+    <div class="text-center">
+      <h1 style="font-weight: bold;">ESPECIALIDADES </h1>
+    </div>
 
-     <!-- Primero Selecciono Especialidad -->
+    <div class="row">
+      
+      <div class="col-lg-4" *ngFor="let item of listaEspedialidades">
+        
+        <button class="btn" (click)="seleccionarEspecialidad2(item)">
+        <img [src]="item.img" alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal">{{item.especialidad}}</h2>
+      </button>
+   
+      </div>
+    
+    </div>
+
+    <div *ngIf="false" class="row row-cols-1 row-cols-md-2 g-4" >
+      
+
+    <!-- Primero Selecciono Especialidad -->
     <div  *ngFor="let item of listaEspedialidades" class="col">
       <div class="card" style="width:400px">
         <button class="btn" (click)="seleccionarEspecialidad2(item)">
         <img class="card-img-top" src={{item.img}} alt="Card image" height="250px">
         <div class="card-body">
           <h4 class="card-title">{{item.especialidad}}</h4>
-        </div>
+      </div>
       </button>
       </div>
-   
+
     </div>
+
+    </div>
+     
 
   </div>
 
 
   <!-- LISTADO DE ESPECIALISTAS SEGUN LA ESPECIALIDAD SELECCIONDA-->
-  <div *ngIf="especialidadSeleccionada && !especialistaSelected || especialistaSelected && currenUser.isAdmin && pacienteSelected && !isEspecialidadSelected  "  class="row row-cols-1 row-cols-md-2 g-4">
+  <div @transicionUp-Down *ngIf="especialidadSeleccionada2 && !isEspecialistaSeleccionado2  "  >
     
-    <div  *ngFor="let item of listaEspeciaistas" class="col">
+    <div *ngIf="false">  
+      <div  *ngFor="let item of listaEspecialistasxEspecialidad" class="col">
       <div class="card" style="width:200px">
         <button class="btn" (click)="seleccionarEspecialista2(item)">
         <img class="card-img-top" src={{item.fotosPerfil[0]}} alt="Card image" height="250px">
@@ -289,134 +101,135 @@
       </div>
    
     </div>
-    
-    <div  *ngFor="let item of listaEspedialidades" class="col">
-      <div class="card" style="width:400px">
-        <button class="btn" (click)="seleccionarEspecialidad(item)">
-        <img class="card-img-top" src={{item.img}} alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{item.especialidad}}</h4>
-        </div>
-      </button>
-      </div>
-   
+    </div>
+    <div class="text-center">
+      <h1 style="font-weight: bold;">ESPECIALISTAS</h1>
     </div>
 
+    <div class="row">
+      
+      <div class="col-lg-4" *ngFor="let item of listaEspecialistasxEspecialidad">
+        
+        <button class="btn" (click)="seleccionarEspecialista2(item)">
+        <img [src]="item.fotosPerfil[0]" alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal">{{item.nombre}} {{item.apellido}}</h2>
+        <p> Edad: {{item.edad}}</p>
 
+      </button>
+   
+      </div>
+    
+    </div>
+
+    
   </div>
 
   <!--Seleccion de FECHAS SI ES UN PACIENTE -->
-  <div *ngIf="especialistaSelected && isEspecialidadSelected && !currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
-    <h2>Especialidad y Especialistas Seleccionados</h2>
-    <button class="btn" >   </button>
+  <div *ngIf="isEspecialistaSeleccionado2 && especialidadSeleccionada2 && !currenUser.isAdmin"  >
+    <div class="text-center">
+      <h1>Especialidad y Especialistas Seleccionados 2 </h1>
+    </div>  
+    <div class="row">
+      
+      <!--ESPECIALIDAD-->
+      <div class="col-lg-4" >     
+        <img [src]="especialidadSeleccionadaActualmente.img" alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal">ESPECIALIDAD SELECCIONADA</h2>
+        <p>{{especialidadSeleccionadaActualmente.especialidad}}</p>
+      </div>
+
+      <!--ESPECIALISTA-->
+      <div class="col-lg-4" >     
+        <img src={{especialistaSeleccionado2.fotosPerfil[0]}} alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal"> ESPECIALISTA SELECCIONADO </h2>
+        <p>{{especialistaSeleccionado2.nombre}} {{especialistaSeleccionado2.apellido}} </p>
+        <p>Edad: {{especialidadSeleccionada2.edad}}</p>
+      </div>
     
-    <div  class="col">
-      <div class="card" style="width:300px">
-        <button class="btn">
-        <img class="card-img-top" src='https://www.infobae.com/new-resizer/z2MFc71qo7UzUeb53tcI9ma5ZwY=/1200x900/filters:format(webp):quality(85)//s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2018/01/09172720/PTM-visita-pediatraApertura.jpg' alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{especialidadSeleccionada.especialidad}}</h4>
+    </div>
+
+      <div  *ngIf="tieneDiasDisponibles"  style="width: 100%;" >
+        <div class="text-center">
+          <h2>Seleccione  el día del turno </h2>
         </div>
-      </button>
-      </div>
-   
-    </div>
+        <button @transicionDer-Izq *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_ | transformarFecha}} </button>
 
-    <div  class="col">
-    <div class="card" style="width:400px">
-      <button class="btn" >
-      <img class="card-img-top" src={{especialistaSeleccionado.fotosPerfil[0]}} alt="Card image" height="250px">
-      <div class="card-body">
-        <h4 class="card-title">{{especialidadSeleccionada.nombre}} {{especialidadSeleccionada.apellido}} </h4>
-        <p class="card-text">- Sus especialidades: </p>
-        <ul >
-          <li *ngFor="let item of especialistaSeleccionado.especialidad" > {{item.especialidad}} </li>
-        </ul>
-        <p class="card-text">- Edad: {{especialidadSeleccionada.edad}}  </p>
-        <a href="#" class="btn btn-primary">See Profile</a>
+        
       </div>
-    </button>
-    </div>
-    </div>
-
-      <div  *ngIf="tieneDiasDisponibles" >
-        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_.toDateString()}} </button>
-
-        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora.getMinutes()}} </button>
-  
+      <div>
+        <div class="text-center">
+          <h2>Seleccione la hora del turno </h2>
+        </div>
+        <button @transicionDer-Izq *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora | date:'shortTime'}} </button>
       </div>
+
       <div *ngIf="!tieneDiasDisponibles">
         <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
       </div>
 
-      <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
+      <button @transicionDer-Izq *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
 
      
 
   </div>
 
   <!--Seleccion de FECHAS SI ES UN ADMINISTRADOR -->
-  <div *ngIf="especialistaSelected && isEspecialidadSelected && currenUser.isAdmin"  class="row row-cols-1 row-cols-md-2 g-4">
-    <h2>Especialidad y Especialistas Seleccionados</h2>
-   
-    <!--PACIENTE-->
-    <div  class="col">
-      <div class="card" style="width:400px">
-        <button class="btn" >
-        <img class="card-img-top" src={{PacienteSeleccionado.fotosPerfil[0]}} alt="Card image" height="125px">
-        <img class="card-img-top" src={{PacienteSeleccionado.fotosPerfil[1]}} alt="Card image" height="125px">
-        <div class="card-body">
-          <h4 class="card-title">{{PacienteSeleccionado.nombre}} {{PacienteSeleccionado.apellido}} </h4>
-          <p class="card-text">- Obra Social: {{PacienteSeleccionado.obraSocial}} </p>
-          
-          <p class="card-text">- Edad: {{PacienteSeleccionado.edad}}  </p>
-
-        </div>
-      </button>
-      </div>
-      </div>
-    <!--ESPECIALIDAD-->
-    <div  class="col">
-      <div class="card" style="width:400px">
-        <button class="btn">
-        <img class="card-img-top" src='https://www.infobae.com/new-resizer/z2MFc71qo7UzUeb53tcI9ma5ZwY=/1200x900/filters:format(webp):quality(85)//s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2018/01/09172720/PTM-visita-pediatraApertura.jpg' alt="Card image" height="250px">
-        <div class="card-body">
-          <h4 class="card-title">{{especialidadSeleccionada.especialidad}}</h4>
-        </div>
-      </button>
-      </div>
+  <div *ngIf="isEspecialistaSeleccionado2 && especialidadSeleccionada2 && currenUser.isAdmin" >
+    
+    <div class="text-center">
+      <h1>Especialidad y Especialistas Seleccionados</h1>
    
     </div>
-
-     <!--ESPECIALISTA-->
-    <div  class="col">
-    <div class="card" style="width:400px">
-      <button class="btn" >
-      <img class="card-img-top" src={{especialistaSeleccionado.fotosPerfil[0]}} alt="Card image" height="250px">
-      <div class="card-body">
-        <h4 class="card-title">{{especialidadSeleccionada.nombre}} {{especialidadSeleccionada.apellido}} </h4>
-        <p class="card-text">- Sus especialidades: </p>
-        <ul >
-          <li *ngFor="let item of especialistaSeleccionado.especialidad" > {{item.especialidad}} </li>
-        </ul>
-        <p class="card-text">- Edad: {{especialidadSeleccionada.edad}}  </p>
-        <a href="#" class="btn btn-primary">See Profile</a>
-      </div>
-    </button>
-    </div>
-    </div>
-
-    <div  *ngIf="tieneDiasDisponibles" >
-        <button *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_.toDateString()}} </button>
-
-        <button *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora.getMinutes()}} </button>
   
+    <div class="row">
+      
+       <!--PACIENTE-->
+       <div class="col-lg-4" >     
+        <img src={{PacienteSeleccionado.fotosPerfil[0]}} alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal"> PACIENTE SELECCIONADO </h2>
+        <p>{{PacienteSeleccionado.nombre}} {{PacienteSeleccionado.apellido}}  </p>
+        <p>Obra Social: {{PacienteSeleccionado.obraSocial}}</p>
+      </div>
+
+      <!--ESPECIALIDAD-->
+      <div class="col-lg-4" >     
+        <img [src]="especialidadSeleccionadaActualmente.img" alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal">ESPECIALIDAD SELECCIONADA</h2>
+        <p>{{especialidadSeleccionadaActualmente.especialidad}}</p>
+      </div>
+
+      <!--ESPECIALISTA-->
+      <div class="col-lg-4" >     
+        <img src={{especialistaSeleccionado2.fotosPerfil[0]}} alt="" class="bd-placeholder-img rounded-circle" width="190" height="190" >
+        <h2 class="fw-normal"> ESPECIALISTA SELECCIONADO </h2>
+        <p>{{especialistaSeleccionado2.nombre}} {{especialistaSeleccionado2.apellido}} </p>
+        <p>Edad: {{especialidadSeleccionada2.edad}}</p>
+      </div>
+    
     </div>
+
+
+
+
+    <div  *ngIf="tieneDiasDisponibles" style="width: 100%;" >
+      <div class="text-center">
+        <h2>Seleccione  el día del turno </h2>
+      </div>
+        <button @transicionDer-Izq *ngFor="let dia_ of fechasDisponiblesParaTurno" style="margin: 10px;color: black; " type="button" class="btn btn-secondary" (click)="seleccionarFechaTurno(dia_)">   {{dia_ | transformarFecha}} </button>
+    </div>
+    <div>
+      <div class="text-center">
+        <h2>Seleccione la hora del turno </h2>
+      </div>
+      <button @transicionDer-Izq *ngFor="let hora of horasDisponibles" style="margin: 10px;color: black; " type="button" class="btn btn-info" (click)="seleccionarHora(hora)"> {{hora.getHours()}}:{{hora | date:'shortTime'}} </button>
+    </div>
+
+
     <div *ngIf="!tieneDiasDisponibles">
         <h1 style="color: red;"> EL ESPECIALISTA NO TIENE TURNOS DISPONIBLES PARA ESTA ESPECIALIDAD. </h1>
     </div>
     
-    <button *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
+    <button @transicionDer-Izq *ngIf="horaSelected" style="margin: 10px;color: black; " type="button" class="btn btn-success" (click)="crearTurno()"> Crear Turno ! </button>
 
      
 

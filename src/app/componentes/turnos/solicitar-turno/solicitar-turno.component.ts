@@ -7,11 +7,40 @@ import { Turno } from 'src/app/entidades/turnos';
 import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 var uniqid = require('uniqid'); 
+import Swal from 'sweetalert2';
+import{trigger,style,transition,animate, state,keyframes} from'@angular/animations'
 
 @Component({
   selector: 'app-solicitar-turno',
   templateUrl: './solicitar-turno.component.html',
-  styleUrls: ['./solicitar-turno.component.scss']
+  styleUrls: ['./solicitar-turno.component.scss'],
+  animations:[
+    trigger('transicionUp-Down',[
+      state('void',style({
+        transform:'translateY(-100%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+    trigger('transicionDer-Izq',[
+      state('void',style({
+        transform:'translateX(200%)',
+        opacity:0
+      })),
+      transition(':enter',[
+        animate(500,style({
+          transform:'translateY(0)',
+          opacity:1
+        }))
+      ])
+    ]),
+   
+  ],
 })
 export class SolicitarTurnoComponent implements OnInit {
   
@@ -22,6 +51,8 @@ export class SolicitarTurnoComponent implements OnInit {
   listaPacientes:Usuario[]=[]
   listaEspedialidades:any[]=[] //especialidades
   listaEspeciaistas:Usuario[]=[] //especialista
+  listaEspecialistasxEspecialidad:Usuario[]=[]
+
   disponibilidadEspecialista:number[]=[] // dias que trabaja el especialista segun la especialidad 
   fechasDisponiblesParaTurno:Date[] = [] // fechas disponibles segun los dias que trabaja el especialista
   horasDisponibles:Date[]=[] // horas disponibles para el turno segun los horarios de APERTURA , CIERRE y la duración del turno 
@@ -34,15 +65,21 @@ export class SolicitarTurnoComponent implements OnInit {
   //Selecciones
   tieneDiasDisponibles:boolean = true
   especialistaSelected:boolean = false //true user seleccionado false contrario 
+  especialidadSeleccionadaActualmente:any = false
   pacienteSelected:boolean = false
   isEspecialidadSelected:boolean = false
   horaSelected:boolean=false
 
   especialistaSeleccionado:Usuario = new Usuario()
+  especialistaSeleccionado2:Usuario = new Usuario()
+  isEspecialistaSeleccionado2:boolean = false
   especialidadSeleccionada:any
+  especialidadSeleccionada2:any
   PacienteSeleccionado:Usuario = new Usuario()
   fechaTurnoSelecciada:Date=new Date()
   horaSeleccionada:Date = new Date ()
+
+  duracionTurno:number = 0
 
   constructor(private apiFB:FirebaseService,private ruteo:Router) {
     this.apiFB.getUserLogged().subscribe(res=>{ //observables
@@ -120,28 +157,63 @@ export class SolicitarTurnoComponent implements OnInit {
     this.especialistaSeleccionado= item
     
   }
+
   seleccionarEspecialista2(item:Usuario){
-    //this.listaEspedialidades = item.especialidad
-    this.especialistaSelected=true
-    this.especialistaSeleccionado= item
+
+   this.isEspecialistaSeleccionado2=true
+
+    this.especialistaSeleccionado2= item
     
+     //accedo a la lista de especialidades del especialista seleccionado y verifico si tiene disponibilidad 
+      this.especialistaSeleccionado2.especialidad.forEach(value=>{
+        if (value.id === this.especialidadSeleccionadaActualmente.id){
+            if(value.diasDisponibles.length>0){
+              this.disponibilidadEspecialista = value.diasDisponibles
+              this.duracionTurno = value.disponibilidad
+            }else{
+              this.tieneDiasDisponibles=false
+              Swal.fire({
+                title: 'Ups!',
+                text: 'EL ESPECIALISTA NO TIENE DISPONIBILIDAD HORARIA',
+                icon: 'info',
+                timer: 4000,
+                toast: true,
+                backdrop: false,
+                position: 'bottom',
+                grow: 'row',
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+            }
+        }
+      })
+
+      this.filtrarFechasDisponibles()
   }
 
   seleccionarEspecialidad2(item:any){
-    this.isEspecialidadSelected=true
-    this.especialidadSeleccionada=true
+    //al seleccionar una especialidad listo los especialistas que tengas esa especialidad 
+
+   // this.isEspecialidadSelected=true
+
+    this.especialidadSeleccionada2=true
+    this.especialidadSeleccionadaActualmente = item
     
     let listaAuxEspecialistas:Usuario[]=[]
+    //recorro la lsta de especialistas
     this.listaEspeciaistas.forEach(value=>{
-      
+      //recorro la lista de especialidades del especialista actual en la iteracion
       value.especialidad.forEach(especialidadEspcialista=>{
+
         if(especialidadEspcialista.id === item.id){
           listaAuxEspecialistas.push(value)
         }
       })
       
     })
-    this.listaEspeciaistas = listaAuxEspecialistas
+    this.listaEspecialistasxEspecialidad = listaAuxEspecialistas
+
+   
 
   }
 
@@ -158,7 +230,19 @@ export class SolicitarTurnoComponent implements OnInit {
           this.disponibilidadEspecialista = value.diasDisponibles
         }else{
           this.tieneDiasDisponibles=false
-          //alert('EL ESPECIALISTA NO TIENE DISPONIBILIDAD HORARIA')
+
+          Swal.fire({
+            title: 'Ups!',
+            text: 'EL ESPECIALISTA NO TIENE DISPONIBILIDAD HORARIA',
+            icon: 'info',
+            timer: 4000,
+            toast: true,
+            backdrop: false,
+            position: 'bottom',
+            grow: 'row',
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
         }
 
         
@@ -171,11 +255,9 @@ export class SolicitarTurnoComponent implements OnInit {
   }
 
   seleccionarFechaTurno(dia:Date){
-    console.log('FECHA SELECCIONADA')
-    console.log(dia)
 
     this.fechaTurnoSelecciada = dia
-    this.obtenerHoras(dia,this.especialidadSeleccionada.disponibilidad)
+    this.obtenerHoras(dia,this.duracionTurno)
   }
   seleccionarHora(hora:Date){
     this.horaSeleccionada = hora
@@ -219,7 +301,7 @@ export class SolicitarTurnoComponent implements OnInit {
         // itero los dias que atiende el Especialista
       this.disponibilidadEspecialista.forEach(diaDisponibleEspecialista=>{
           if(proximoDia.getDay() === diaDisponibleEspecialista){
-            //alert('fecha disponible ')
+           
             this.fechasDisponiblesParaTurno.push(proximoDia)
           }
       })
@@ -265,9 +347,9 @@ export class SolicitarTurnoComponent implements OnInit {
     }else{
       newTurno.paciente = this.PacienteSeleccionado
     }
-    newTurno.duracion = this.especialidadSeleccionada.disponibilidad
-    newTurno.especialista = this.especialistaSeleccionado
-    newTurno.especialidad=this.especialidadSeleccionada
+    newTurno.duracion = this.especialidadSeleccionadaActualmente.disponibilidad
+    newTurno.especialista = this.especialistaSeleccionado2
+    newTurno.especialidad=this.especialidadSeleccionadaActualmente
     newTurno.fecha=this.horaSeleccionada
     newTurno.status=1 // pendiente
     newTurno.id=idTurno
@@ -279,7 +361,33 @@ export class SolicitarTurnoComponent implements OnInit {
      //this.auxAdmin.uid = rta.user?.uid
      let rtaGuardarAdmin = this.apiFB.addDocumentoaColeccion(this.nameCollectionTurnos,idTurno,JSON.parse(JSON.stringify(newTurno)))
      //this.loading=false
-     rtaGuardarAdmin.status? alert('Se ha creado el turno'):alert('ERROR AL CREAR EL TURNO ')
+     rtaGuardarAdmin.status
+     ?
+      Swal.fire({
+      title: 'ENHORABUENA!',
+      text: 'SE HA CREADO EL TURNO',
+      icon: 'success',
+      timer: 4000,
+      toast: true,
+      backdrop: false,
+      position: 'bottom',
+      grow: 'row',
+      timerProgressBar: true,
+      showConfirmButton: false
+    })
+    :
+    Swal.fire({
+      title: 'UPS!',
+      text: 'NO SE HA PODIDO CREAR EL TURNO',
+      icon: 'error',
+      timer: 4000,
+      toast: true,
+      backdrop: false,
+      position: 'center',
+      grow: 'row',
+      timerProgressBar: true,
+      showConfirmButton: false
+    })
      !rtaGuardarAdmin.status && setTimeout(()=>{
       window.location.reload()
     },2000)
