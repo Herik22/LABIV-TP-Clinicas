@@ -99,8 +99,11 @@
         <td>
             <!--ACEPTAR SI NO ESTA    RECHAZADO 4, CANCELADO 6, REALIZADO 3-->
     
-            <button *ngIf=" turno.historialGenerado==false  && currenUser.perfil==='Especialista' &&  turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)">Generar Historial Clinico </button>      
-            <button *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      
+           <!-- <button *ngIf=" turno.historialGenerado==false  && currenUser.perfil==='Especialista' &&  turno.status == 3 "  style="margin: 10px;color: rgb(255, 255, 255); background-color: #000000; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal6"  (click)="seleccionarTurnoParaComentario(turno)"> Generar Historial Clinico </button>      -->  
+           <!--<button *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 "  style="margin: 10px;color: black; background-color: #cd04d1; " type="button" class="btn "  data-bs-toggle="modal" data-bs-target="#exampleModal5"  (click)="seleccionarTurnoParaComentario(turno)"   >Finalizar Turno</button>      --> 
+            <a class="btn btn-primary" *ngIf=" currenUser.perfil==='Especialista' &&  turno.status == 2 " data-bs-toggle="modal" href="#exampleModalToggle" role="button" (click)="seleccionarTurnoParaComentario(turno)" >Finalizar Turno</a>
+  
+
             <button *ngIf="currenUser.perfil==='Especialista' &&  turno.status != 3 && turno.status != 4 && turno.status != 6 && turno.status != 2 "  style="margin: 10px;color: black; background-color: #39ff14; " type="button" class="btn " (click)="aceptarTurno(turno)"  >Aceptar  Turno </button>
             <button *ngIf="  turno.status != 3 && turno.status != 6 "  style="margin: 10px;color: black; " type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno)"  > Cancelar Turno </button>
             <button *ngIf=" currenUser.perfil==='Especialista' && turno.status != 3 && turno.status != 6  && turno.status != 4 "  style="margin: 10px;color: black; background-color: olive; " type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="preCancelarTurno(turno,1)"  > Rechazar Turno </button>
@@ -269,15 +272,15 @@
     </div>
   </div>
 </div>
-<!-- Modal Finalizar Turno  -->
-<div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel5" aria-hidden="true">
+
+<!-- <div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel5" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <p> Finalizar Turno </p>
       </div>
 
-      <form [formGroup]="formaFinalizarTurno" (ngSubmit)="finalizarTurno()" > 
+      <form [formGroup]="formaFinalizarTurno" (ngSubmit)="newFinalizarTurno()" > 
 
       <div  class="modal-body">
         <div class="text-center">
@@ -310,7 +313,7 @@
     </div>
   </div>
 </div>
-<!-- Modal HISTORIAL CLINICO  -->
+
 <div class="modal fade" id="exampleModal6" tabindex="-1" aria-labelledby="exampleModalLabel6" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -457,5 +460,199 @@
     </div>
   </div>
 </div>
+-->
 
-  
+<!--PRIMER MODAL-->
+<div class="modal fade" id="exampleModalToggle" tabindex="-1" aria-labelledby="exampleModalToggleLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p> Finalizar Turno </p>
+      </div>
+
+      <form [formGroup]="formaFinalizarTurno" (ngSubmit)="newFinalizarTurno()" > 
+
+      <div  class="modal-body">
+        <div class="text-center">
+          <h5 class="modal-title" id="exampleModalLabel">Especialista 👨🏼‍🔬 {{turnoSelectedForComentary.especialista.nombre}} {{turnoSelectedForComentary.especialista.apellido}} </h5>    
+       
+          <h5 class="modal-title">{{turnoSelectedForComentary.especialidad?.especialidad}} </h5>
+          <img src={{turnoSelectedForComentary.especialidad?.img}}  alt="" width=150px>
+        </div>
+        
+        <label for="firstNamep" class="form-label" style="font-weight: bold;" > Comentario / Reseña</label>
+        <textarea class="form-control" aria-label="With textarea" placeholder="" formControlName="comentario" > </textarea>
+        <small class="invalid" *ngIf="formaFinalizarTurno.controls['comentario'].errors?.['required']&& formaFinalizarTurno.controls['comentario'].touched" style="color:red ;">
+          el campo es requerido.
+       </small>
+        <label for="firstNamep" class="form-label"  style="font-weight: bold;" > ¿Cual es el diagnostico? </label>
+        <textarea class="form-control" aria-label="With textarea" placeholder="" formControlName="diagnostico" > </textarea>
+        <small class="invalid" *ngIf="formaFinalizarTurno.controls['diagnostico'].errors?.['required']&& formaFinalizarTurno.controls['diagnostico'].touched" style="color:red ;">
+          El diagnostico es requerido.
+      </small>
+       
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar</button>
+        <!-- <button type="submit" class="btn btn-success" data-bs-dismiss="modal" > Enviar Encuesta  </button> --> 
+        <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal" [disabled]="formaFinalizarTurno.invalid"> Continuar </button>
+      </div>
+      </form>
+   
+    </div>
+  </div>
+</div>
+<!--SEGUNDO MODAL-->
+<div class="modal fade" id="exampleModalToggle2" tabindex="-1" aria-labelledby="exampleModalToggleLabel2" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p> Historia Clínica {{turnoSelectedForComentary.paciente.nombre}} </p>
+      </div>
+
+      <form [formGroup]="formaHistorialClinico" (ngSubmit)="guardarHistorial2()" > 
+
+      <div  class="modal-body">
+        <div class="text-center">
+          <h5 class="modal-title" id="exampleModalLabel">Especialista 👨🏼‍🔬 {{turnoSelectedForComentary.especialista.nombre}} {{turnoSelectedForComentary.especialista.apellido}} </h5>    
+          <img src={{turnoSelectedForComentary.paciente.fotosPerfil[0]}}  alt="" width=150px>
+        </div>
+        
+        <div class="row g-3">
+
+          <div class="col-sm-6">
+            <label for="firstName" class="form-label"> Nombre </label>
+            <input type="text" class="form-control" id="firstName" placeholder="" value=" {{turnoSelectedForComentary.paciente.nombre}} " disabled="false">
+
+          </div>
+          <div class="col-sm-6">
+            <label for="lastName" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="lastName" placeholder="" value=" {{turnoSelectedForComentary.paciente.apellido}} "  disabled="false" >
+        
+          </div>
+          <div class="col-sm-6">
+            <label for="firstNamep" class="form-label"> Altura (mt) </label>
+            <input type="text" class="form-control" id="firstNamep" placeholder="" value="" formControlName="altura" >
+            <small class="invalid" *ngIf="formaHistorialClinico.controls['altura'].errors?.['required']&& formaHistorialClinico.controls['altura'].touched" style="color:red ;">
+                la altura es requerida.
+            </small>
+          </div>
+          <div class="col-sm-6">
+            <label for="lastNameP" class="form-label">Peso (kg)</label>
+            <input type="text" class="form-control" id="lastNameP" placeholder="" formControlName="peso" >
+            <small class="invalid" *ngIf="formaHistorialClinico.controls['peso'].errors?.['required']&& formaHistorialClinico.controls['peso'].touched" style="color:red ;">
+                El Apellido es requerido.
+            </small>
+            
+          </div>
+          <div class="col-sm-6">
+            <label for="firstNamepx" class="form-label"> Temperatura (°C) </label>
+            <input type="text" class="form-control" id="firstNamepx" placeholder="" value="" formControlName="temperatura" >
+            <small class="invalid" *ngIf="formaHistorialClinico.controls['temperatura'].errors?.['required']&& formaHistorialClinico.controls['temperatura'].touched" style="color:red ;">
+                la temperatura es requerida.
+            </small>
+          </div>
+          <div class="col-sm-6">
+            <label for="lastNamePx" class="form-label">Presion</label>
+            <input type="text" class="form-control" id="lastNamePx" placeholder="" formControlName="presion" >
+            <small class="invalid" *ngIf="formaHistorialClinico.controls['presion'].errors?.['required']&& formaHistorialClinico.controls['presion'].touched" style="color:red ;">
+                La presion es requerida.
+            </small>
+            
+          </div>
+          <hr class="my-4">
+          <p class="text-center"> ANEXOS </p>
+          <form *ngIf="add1erDatoDinamico" [formGroup]="forma1erAgregado"  > 
+            
+          <div class="row g-3">
+            <div class="col-sm-6"> 
+              
+              <label for="firstNamepx" class="form-label"> Nombre </label>
+              <input type="text" class="form-control" id="firstNamepx" placeholder="" value="" formControlName="clave1" >
+              <small class="invalid" *ngIf="forma1erAgregado.controls['clave1'].errors?.['required']&& forma1erAgregado.controls['clave1'].touched" style="color:red ;">
+                  la temperatura es requerida.
+              </small>
+            </div>
+            <div class="col-sm-6">
+              <label for="lastNamePx" class="form-label">Valor</label>
+              <input type="text" class="form-control" id="lastNamePx" placeholder="" formControlName="valor1" >
+              <small class="invalid" *ngIf="forma1erAgregado.controls['valor1'].errors?.['required']&& forma1erAgregado.controls['valor1'].touched" style="color:red ;">
+                  La presion es requerida.
+              </small>
+              
+            </div>
+          </div>
+          </form>
+          <form *ngIf="add2doDatoDinamico" [formGroup]="forma2erAgregado"  > 
+            
+          <div class="row g-3">
+            <div class="col-sm-6"> 
+              
+              <label for="firstNamepx" class="form-label"> Nombre </label>
+              <input type="text" class="form-control" id="firstNamepx" placeholder="" value="" formControlName="clave2" >
+              <small class="invalid" *ngIf="forma2erAgregado.controls['clave2'].errors?.['required']&& forma2erAgregado.controls['clave2'].touched" style="color:red ;">
+                  la temperatura es requerida.
+              </small>
+            </div>
+            <div class="col-sm-6">
+              <label for="lastNamePx" class="form-label">Valor</label>
+              <input type="text" class="form-control" id="lastNamePx" placeholder="" formControlName="valor2" >
+              <small class="invalid" *ngIf="forma2erAgregado.controls['valor2'].errors?.['required']&& forma2erAgregado.controls['valor2'].touched" style="color:red ;">
+                  La presion es requerida.
+              </small>
+              
+            </div>
+          </div>
+          </form>
+          <form *ngIf="add3roDatoDinamico" [formGroup]="forma3erAgregado"  > 
+       
+          <div class="row g-3">
+            <div class="col-sm-6"> 
+              
+              <label for="firstNamepx" class="form-label"> Nombre </label>
+              <input type="text" class="form-control" id="firstNamepx" placeholder="" value="" formControlName="clave3" >
+              <small class="invalid" *ngIf="forma3erAgregado.controls['clave3'].errors?.['required']&& forma3erAgregado.controls['clave3'].touched" style="color:red ;">
+                  la temperatura es requerida.
+              </small>
+            </div>
+            <div class="col-sm-6">
+              <label for="lastNamePx" class="form-label">Valor</label>
+              <input type="text" class="form-control" id="lastNamePx" placeholder="" formControlName="valor3" >
+              <small class="invalid" *ngIf="forma3erAgregado.controls['valor3'].errors?.['required']&& forma3erAgregado.controls['valor3'].touched" style="color:red ;">
+                  La presion es requerida.
+              </small>
+              
+            </div>
+          </div>
+          </form>
+       
+
+          <button (click)="addCampoDinamico()" type="button" class="text-center"> 
+            <p>AÑADIR INFORMACIÓN</p>
+            <img src="../../../../assets/add.png" alt="" width="50px" height="50px">
+          </button>
+
+          
+        </div>
+
+
+
+
+      </div>
+
+      <div class="modal-footer">
+     
+        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="formaHistorialClinico.invalid"> Guardar Historial </button>
+        <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Volver atras</button>
+      
+      </div>
+      
+      </form>
+   
+    </div>
+  </div>
+</div>
+
+

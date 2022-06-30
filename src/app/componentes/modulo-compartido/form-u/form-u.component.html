@@ -1,5 +1,4 @@
 <div class="row g-5">   
- 
     <div class="col-md-7 col-lg-8">
       <h4 class="mb-3">{{altaAdmin?'Registro administradores':'Registro de Especialista'}}</h4>
       <form [formGroup]="altaAdmin?formaAdmin:formaEspecialista" (ngSubmit)="altaAdmin?registrarAdmin():registrarEspecialista()" >
@@ -102,7 +101,16 @@
 
         
         <div class="g-recaptcha" data-sitekey="6Lf7pVggAAAAAADzkFKAXVxvC3emLOoe2_zB1fLV" style="margin:10px" ></div>
-            
+       
+        <div class="captcha">
+          <div class="text-center">
+            <p style="color:blue;font-weight: bold;">CAPTCHA</p>
+          </div>
+
+            <input type="number" class="form-control " value={{this.numeroRandom}} readonly style="width:25% ;">
+            <input type="text" style="width:40% ;" class="form-control " formControlName='capcha' name="capcha" required>
+            <small  style="color:red ;" class="invalid" *ngIf="formaEspecialista.controls['capcha']?.errors?.['required'] && formaEspecialista.controls['capcha'].touched">El capcha es requerido</small>
+           </div>   
    
         <hr class="my-4">
 

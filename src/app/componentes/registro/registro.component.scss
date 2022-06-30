@@ -1,3 +1,13 @@
 .container {
     max-width: 960px;
   }
+  .captcha{
+    border: 1px solid blue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items:center ;
+    
+  
+  }

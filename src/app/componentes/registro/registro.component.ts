@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import Swal from 'sweetalert2';
 import { Usuario } from 'src/app/entidades/usuario';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
@@ -22,6 +22,7 @@ export class RegistroComponent implements OnInit {
   formaPaciente:FormGroup;
   loading:boolean=false
   nameCollectionUsers :string ='UsuariosColeccion'
+  numeroRandom:number = Math.round(Math.random() * (9999 - 1111));
 
   constructor(private fb:FormBuilder,private firebaseApi:FirebaseService,private ruteo:Router ) { 
     this.firebaseApi.getCollection('especialidades').subscribe(data=>{
@@ -42,6 +43,8 @@ export class RegistroComponent implements OnInit {
       'emailP':['',[Validators.required,Validators.email]],
       'passwordP':['',[Validators.required,Validators.minLength(6)]],
       'fotosP':['',[Validators.required,]],
+      'capcha':['',[Validators.required,]],
+
 
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
     })
@@ -55,69 +58,87 @@ export class RegistroComponent implements OnInit {
 
   registrarPaciente(){
 
-    this.loading=true
-    //console.log(this.formaEspecialista.value)
-    this.auxUsuario.nombre=this.formaPaciente.value.nombrePaciente
-    this.auxUsuario.apellido=this.formaPaciente.value.apellidoP
-    this.auxUsuario.edad=this.formaPaciente.value.edadP
-    this.auxUsuario.dni=this.formaPaciente.value.dni_
-    this.auxUsuario.obraSocial=this.formaPaciente.value.obraSocial
-    this.auxUsuario.email=this.formaPaciente.value.emailP
-    this.auxUsuario.password=this.formaPaciente.value.passwordP
-    
-    //console.log(this.auxUsuario)
-
-    for(let i = 0;i<this.fotosPaciente.length;i++){
-      let reader =new FileReader()
-      reader.readAsDataURL(this.fotosPaciente[i])
-      reader.onloadend=()=>{
-       this.firebaseApi.subirImages('fotosUsuarios',`${this.auxUsuario.dni}_${this.auxUsuario.nombre}_img${i}`,reader.result)
-       .then(rta=>{
-        if(rta != null ){
-
-          this.auxUsuario.fotosPerfil.push(rta)
-          // crear al nuevo especialista en fb.
-          if(i==1){
-          this.firebaseApi.register(this.auxUsuario.email,this.auxUsuario.password)
-          .then(rta=>{
-
-            //this.firebaseApi.enviarEmail()
-            //this.firebaseApi.logOut() 
- 
-            this.auxUsuario.uid = rta.user?.uid
-            this.auxUsuario.perfil='Paciente'
-            let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
-            //this.loading=false   
-            if(rtaGuardarEspecilista.status){
-              console.log('GUARDADO EN LA COLECCION')
-              this.firebaseApi.enviarEmail()
-              .then(value=>{
-                console.log('ENVIADO EMAIL'+value)
-               // this.firebaseApi.logOut()
-                this.formaPaciente.reset()
-                setTimeout(()=>{
-                  this.ruteo.navigate(['/login'])  
-                },2000)
-                
-              })
-              .catch(err=>{
-                console.log('erro enviando el email'+err)
-              })
-            }
-          })
-          .catch(err =>{
-            this.loading=false   
-            console.log('error al crear usuario fb'+err)
-          })           
-          }       
-        }  
-       })
-       .catch(err =>{
-         return false
-       })
+    if(this.formaPaciente.value.captcha === this.numeroRandom){
+      this.loading=true
+      //console.log(this.formaEspecialista.value)
+      this.auxUsuario.nombre=this.formaPaciente.value.nombrePaciente
+      this.auxUsuario.apellido=this.formaPaciente.value.apellidoP
+      this.auxUsuario.edad=this.formaPaciente.value.edadP
+      this.auxUsuario.dni=this.formaPaciente.value.dni_
+      this.auxUsuario.obraSocial=this.formaPaciente.value.obraSocial
+      this.auxUsuario.email=this.formaPaciente.value.emailP
+      this.auxUsuario.password=this.formaPaciente.value.passwordP
+      
+      //console.log(this.auxUsuario)
+  
+      for(let i = 0;i<this.fotosPaciente.length;i++){
+        let reader =new FileReader()
+        reader.readAsDataURL(this.fotosPaciente[i])
+        reader.onloadend=()=>{
+         this.firebaseApi.subirImages('fotosUsuarios',`${this.auxUsuario.dni}_${this.auxUsuario.nombre}_img${i}`,reader.result)
+         .then(rta=>{
+          if(rta != null ){
+  
+            this.auxUsuario.fotosPerfil.push(rta)
+            // crear al nuevo especialista en fb.
+            if(i==1){
+            this.firebaseApi.register(this.auxUsuario.email,this.auxUsuario.password)
+            .then(rta=>{
+  
+              //this.firebaseApi.enviarEmail()
+              //this.firebaseApi.logOut() 
+   
+              this.auxUsuario.uid = rta.user?.uid
+              this.auxUsuario.perfil='Paciente'
+              let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
+              //this.loading=false   
+              if(rtaGuardarEspecilista.status){
+                console.log('GUARDADO EN LA COLECCION')
+                this.firebaseApi.enviarEmail()
+                .then(value=>{
+                  console.log('ENVIADO EMAIL'+value)
+                 // this.firebaseApi.logOut()
+                  this.formaPaciente.reset()
+                  setTimeout(()=>{
+                    this.ruteo.navigate(['/login'])  
+                  },2000)
+                  
+                })
+                .catch(err=>{
+                  console.log('erro enviando el email'+err)
+                })
+              }
+            })
+            .catch(err =>{
+              this.loading=false   
+              console.log('error al crear usuario fb'+err)
+            })           
+            }       
+          }  
+         })
+         .catch(err =>{
+           return false
+         })
+        }
       }
+  
+    }else{
+      Swal.fire({
+        title: 'Ups!',
+        text: 'Verifica el CAPTCHA y vuelve a intentarlo.',
+        icon: 'error',
+        timer: 4000,
+        toast: true,
+        backdrop: false,
+        position: 'bottom',
+        grow: 'row',
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+      this.numeroRandom= Math.round(Math.random() * (9999 - 1111));
     }
 
+ 
     
   }
 

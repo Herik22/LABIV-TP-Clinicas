@@ -311,7 +311,7 @@ export class EstadisticasComponent implements OnInit {
     pdf.setFontSize(13)
     pdf.text('otro tiulo xd',4,10)
     pdf.setFontSize(20)
-    //pdf.addImage(this.auxImage,'JPEG',193,2,15,15)
+    pdf.addImage(this.auxImage,'JPEG',193,2,15,15)
     let graficoImprimir:any= document.getElementById('graficaTurnoxEspecialidad')
 
     await html2canvas(graficoImprimir).then(canvas=>{
@@ -343,7 +343,7 @@ export class EstadisticasComponent implements OnInit {
   }
 
 
-  
+
   generarPDF(tipoPDF:string)
  {
   

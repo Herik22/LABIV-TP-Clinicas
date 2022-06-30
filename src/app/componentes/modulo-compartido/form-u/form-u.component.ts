@@ -3,6 +3,8 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 import { Router } from '@angular/router';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Usuario } from 'src/app/entidades/usuario';
+import Swal from 'sweetalert2';
+
 var uniqid = require('uniqid'); 
 
 @Component({
@@ -32,6 +34,8 @@ export class FormUComponent implements OnInit {
   @Input() auxAdmin:Usuario 
   @Input() altaAdmin:boolean=false
 
+  numeroRandom:number = Math.round(Math.random() * (9999 - 1111));
+  numeroRandom2:number = Math.round(Math.random() * (9999 - 1111));
 
   constructor(private fb:FormBuilder,private firebaseApi:FirebaseService,private ruteo:Router ) {
     console.log(uniqid())
@@ -50,6 +54,7 @@ export class FormUComponent implements OnInit {
       'email':['',[Validators.required,Validators.email]],
       'password':['',[Validators.required,Validators.minLength(6)]],
       'foto':['',[Validators.required,]],
+      'captcha':[''],
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
     })
     this.formaAdmin = this.fb.group({
@@ -60,6 +65,7 @@ export class FormUComponent implements OnInit {
       'email':['',[Validators.required,Validators.email]],
       'password':['',[Validators.required,Validators.minLength(6)]],
       'foto':['',[Validators.required,]],
+      'captcha':[''],
       //'pais':[this.newProducto.paisDeOrigen?.name?.common],
     })
     this.formaNewEspecialidad = this.fb.group({
@@ -77,84 +83,100 @@ export class FormUComponent implements OnInit {
   }
 
   registrarEspecialista(){
-
-    this.loading=true
-    //console.log(this.formaEspecialista.value)
-    this.auxUsuario.nombre=this.formaEspecialista.value.nombre
-    this.auxUsuario.apellido=this.formaEspecialista.value.apellido
-    this.auxUsuario.edad=this.formaEspecialista.value.edad
-    this.auxUsuario.dni=this.formaEspecialista.value.nombre2
-    this.auxUsuario.email=this.formaEspecialista.value.email
-    this.auxUsuario.password=this.formaEspecialista.value.password
-
-    if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
-      this.listaEspecialidades.forEach(value=>{
-        if(value.id === this.formaEspecialista.value.especialidad){
-          this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30,diasDisponibles:[],img:value.img})
-        }
-      })
-    }else{ 
-      let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad,img:this.imgEspecialidadDefecto}
-      let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
-      if (rtaGuardarEspecialidad.status){
-        this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30,diasDisponibles:[]})
-      }else{
-        alert('error al guardar la especialidad') 
-        return
-      }  //agrego una especialidad.
-      
-    }
-
-let reader =new FileReader()
-    reader.readAsDataURL(this.fotoEspecialista)
-    reader.onloadend=()=>{
-     this.firebaseApi.subirImages('fotosUsuarios',`${this.auxUsuario.dni}_${this.auxUsuario.nombre}`,reader.result)
-     .then(rta=>{
-      if(rta != null ){
-        this.auxUsuario.fotosPerfil.push(rta) 
-        console.log(this.auxUsuario)
-        // Registrar al nuevo especialista en fb.
-        this.firebaseApi.register(this.auxUsuario.email,this.auxUsuario.password)
-        .then(rta=>{
-          console.log('rta register fb ESPECIALISTA')
-          console.log(rta)
-          this.auxUsuario.uid = rta.user?.uid
-          this.auxUsuario.perfil = 'Especialista'
-          let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
-          if(rtaGuardarEspecilista.status){
-            console.log('GUARDADO EN LA COLECCION')
-            this.firebaseApi.enviarEmail()
-            .then(value=>{
-              console.log('ENVIADO EMAIL'+value)
-              //this.firebaseApi.logOut()
-              this.formaEspecialista.reset()
-              setTimeout(()=>{
-                this.ruteo.navigate(['/login'])  
-              },2000)
-              
-            })
-            .catch(err=>{
-              console.log('erro enviando el email'+err)
-            })
-
+    if(this.formaEspecialista.value.capcha === this.numeroRandom){
+      this.loading=true
+      //console.log(this.formaEspecialista.value)
+      this.auxUsuario.nombre=this.formaEspecialista.value.nombre
+      this.auxUsuario.apellido=this.formaEspecialista.value.apellido
+      this.auxUsuario.edad=this.formaEspecialista.value.edad
+      this.auxUsuario.dni=this.formaEspecialista.value.nombre2
+      this.auxUsuario.email=this.formaEspecialista.value.email
+      this.auxUsuario.password=this.formaEspecialista.value.password
+  
+      if(this.formaEspecialista.value.especialidad != 'addEspecialidad'){
+        this.listaEspecialidades.forEach(value=>{
+          if(value.id === this.formaEspecialista.value.especialidad){
+            this.auxUsuario.especialidad.push({id:value.id,especialidad:value.especialidad,disponibilidad:30,diasDisponibles:[],img:value.img})
           }
         })
-        .catch(err=>{
-          this.loading=false
-          console.log('error al registar en fb ESPECIALISTA'+err)
-        })
+      }else{ 
+        let newEspecialidad = {id:uniqid(),especialidad:this.formaNewEspecialidad.value.nombreEspecialidad,img:this.imgEspecialidadDefecto}
+        let rtaGuardarEspecialidad = this.firebaseApi.addDataCollection('especialidades',newEspecialidad)
+        if (rtaGuardarEspecialidad.status){
+          this.auxUsuario.especialidad.push({...newEspecialidad,disponibilidad:30,diasDisponibles:[]})
+        }else{
+          console.log('error al guardar la especialidad') 
+          return
+        }  //agrego una especialidad.
         
-        
-      }  
-     })
-     .catch(err =>{
-       return false
-     })
-    }
- 
+      }
+  
+      let reader =new FileReader()
+      reader.readAsDataURL(this.fotoEspecialista)
+      reader.onloadend=()=>{
+       this.firebaseApi.subirImages('fotosUsuarios',`${this.auxUsuario.dni}_${this.auxUsuario.nombre}`,reader.result)
+       .then(rta=>{
+        if(rta != null ){
+          this.auxUsuario.fotosPerfil.push(rta) 
+          console.log(this.auxUsuario)
+          // Registrar al nuevo especialista en fb.
+          this.firebaseApi.register(this.auxUsuario.email,this.auxUsuario.password)
+          .then(rta=>{
+            console.log('rta register fb ESPECIALISTA')
+            console.log(rta)
+            this.auxUsuario.uid = rta.user?.uid
+            this.auxUsuario.perfil = 'Especialista'
+            let rtaGuardarEspecilista = this.firebaseApi.addDocumentoaColeccion(this.nameCollectionUsers,`${rta.user?.uid}`,JSON.parse(JSON.stringify(this.auxUsuario)))
+            if(rtaGuardarEspecilista.status){
+              console.log('GUARDADO EN LA COLECCION')
+              this.firebaseApi.enviarEmail()
+              .then(value=>{
+                console.log('ENVIADO EMAIL'+value)
+                //this.firebaseApi.logOut()
+                this.formaEspecialista.reset()
+                setTimeout(()=>{
+                  this.ruteo.navigate(['/login'])  
+                },2000)
+                
+              })
+              .catch(err=>{
+                console.log('erro enviando el email'+err)
+              })
+  
+            }
+          })
+          .catch(err=>{
+            this.loading=false
+            console.log('error al registar en fb ESPECIALISTA'+err)
+          })
+          
+          
+        }  
+       })
+       .catch(err =>{
+         return false
+       })
+      }
    
-
-
+    }else{
+     
+      Swal.fire({
+        title: 'Ups!',
+        text: 'Verifica el CAPTCHA y vuelve a intentarlo.',
+        icon: 'error',
+        timer: 4000,
+        toast: true,
+        backdrop: false,
+        position: 'bottom',
+        grow: 'row',
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+      this.numeroRandom= Math.round(Math.random() * (9999 - 1111));
+    
+    }
+    
+  
   }
 
   registrarAdmin(){

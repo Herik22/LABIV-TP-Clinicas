@@ -299,7 +299,6 @@ export class MisTurnosComponent implements OnInit {
       })
     this.listaTurnos=listaFiltrada
   }
- 
   filtrarxPalabra(event:any){
     this.palabraBuscar = event.value
     console.log(this.palabraBuscar)
@@ -341,7 +340,6 @@ export class MisTurnosComponent implements OnInit {
     }
    
   }
-
   aceptarTurno(turno:Turno){
     this.apiFB.updaterTurnoProperty(turno.id,{status:2})
     .then(rta=>{
@@ -414,6 +412,20 @@ export class MisTurnosComponent implements OnInit {
       console.log('error al enviar la Calificacion'+ err)
      })
   }
+  newFinalizarTurno(){
+    // cierro el modal de finalizar y habilito el del historial clinico, al aceptar el historial ejecutro la funcion para finalizar turno y generar historial. 
+    
+  //exampleModalLabel5  ID MODAL FINALIZAR TURNO 
+  //exampleModalLabel6  id modal HISTORIAL 
+
+  //abre el modal para HISTORIAL CLINICO.
+  console.log('cerrando')
+    let modal =  (<HTMLInputElement> document.getElementById('exampleModal6'))   
+    modal.setAttribute('data-bs-toggle','modal');
+    modal.setAttribute('data-bs-target','#exampleModal6');
+  
+  }
+
   finalizarTurno(){
     let especialistaActual = this.listaEspeciaistas.find(value =>{return value.uid === this.turnoSelectedForComentary.especialista.uid})
     let arrayPacientesAtendidosxEspecialista = especialistaActual?especialistaActual.pacientesAtendidos:[]
@@ -444,6 +456,7 @@ export class MisTurnosComponent implements OnInit {
 
 
   }
+
   addCampoDinamico(){
     if(!this.add1erDatoDinamico){
       this.add1erDatoDinamico=true
@@ -455,7 +468,7 @@ export class MisTurnosComponent implements OnInit {
    
   }
   guardarHistorial(){
-
+    //this.finalizarTurno()
     this.auxHistoriaClinica.turno = this.turnoSelectedForComentary
     this.auxHistoriaClinica.id=uniqid()
     this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura
@@ -506,15 +519,71 @@ export class MisTurnosComponent implements OnInit {
    
 
  }
+ guardarHistorial2(){
+
+  this.finalizarTurno()
+  this.formaFinalizarTurno.reset()
+
+  this.auxHistoriaClinica.turno = this.turnoSelectedForComentary
+  this.auxHistoriaClinica.id=uniqid()
+  this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura
+  this.auxHistoriaClinica.peso= this.formaHistorialClinico.value.peso
+  this.auxHistoriaClinica.altura = this.formaHistorialClinico.value.altura 
+  this.auxHistoriaClinica.temperatura = this.formaHistorialClinico.value.temperatura
+  this.auxHistoriaClinica.presion = this.formaHistorialClinico.value.presion
+  if(!this.forma1erAgregado.invalid){
+    let auxClave:string = this.forma1erAgregado.value.clave1  //
+    let auxValor = this.forma1erAgregado.value.valor1 
+    let objAux  = {clave:auxClave,valor:auxValor}
+    this.auxHistoriaClinica.anexos.push(objAux) 
+  }
+  if(!this.forma2erAgregado.invalid){
+    let auxClave2 = this.forma2erAgregado.value.clave2
+    let auxValor2 = this.forma2erAgregado.value.valor2
+    let objAux  = {clave:auxClave2,valor:auxValor2}
+    this.auxHistoriaClinica.anexos.push(objAux)
+  }
+  if(!this.forma3erAgregado.invalid){
+    let auxClave3 = this.forma3erAgregado.value.clave3
+    let auxValor3 = this.forma3erAgregado.value.valor3
+    let objAux  = {clave:auxClave3,valor:auxValor3} 
+    this.auxHistoriaClinica.anexos.push(objAux)
+  }
+
+  let pacienteActual = this.listaPacientes.find(value =>{
+    return value.uid === this.turnoSelectedForComentary.paciente.uid
+  })
+
+  let arrayNuevo = pacienteActual?.historialClinico // traer al usuario actualmente. 
+  
+  arrayNuevo?arrayNuevo.push(JSON.parse(JSON.stringify(this.auxHistoriaClinica))):null 
+
+  let pacienteActualizado = {historialClinico:arrayNuevo} 
+
+   this.apiFB.updaterUsuarioProperty(this.turnoSelectedForComentary.paciente.uid,pacienteActualizado)
+  .then(value=>{
+    //actualizo el estado del turno
+    this.apiFB.updaterTurnoProperty(this.turnoSelectedForComentary.id,{historialGenerado:true})
+    .then(value=>{
+      this.formaHistorialClinico.reset()
+    })
+    .catch(err=>{console.log('error actualizando el estado del historial del TURNO.'+err)})
+  })
+  .catch(err=>{
+    console.log('error guardando la historia clinica en el paciente.'+err)
+    this.closeModalHistorialClinico()
+  }) 
+ 
+
+}
   ngOnInit(): void {
   }
   
 
-
-
   closeModalHistorialClinico(){
     let modal =  (<HTMLInputElement> document.getElementById('exampleModal6'))   
     modal.setAttribute('data-bs-dismiss','modal');
+    
   //.setAttribute('data-dismiss','modal');
   }
 
